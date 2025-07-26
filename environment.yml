@@ -1,0 +1,49 @@
+name: ds-base
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.12
+  
+  # Core data science
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  
+  # Visualization
+  - matplotlib
+  - seaborn
+  - plotly
+  - bokeh
+  
+  # Machine learning
+  - xgboost
+  - lightgbm
+  - statsmodels
+  - tensorflow
+  - keras
+  
+  # Jupyter and kernels
+  - ipykernel
+  - jupyterlab
+  - notebook
+  
+  # Utilities
+  - requests
+  - beautifulsoup4
+  - openpyxl
+  - xlrd
+  - pyyaml
+  - tqdm
+  
+  # Development tools
+  - black
+  - flake8
+  - pytest
+  
+  # pip packages (not available in conda)
+  - pip
+  - pip:
+    - pandas-profiling
+    - streamlit

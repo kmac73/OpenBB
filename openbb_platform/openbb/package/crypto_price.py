@@ -37,6 +37,12 @@ class ROUTER_crypto_price(Container):
             Union[datetime.date, None, str],
             OpenBBField(description="End date of the data, in YYYY-MM-DD format."),
         ] = None,
+        chart: Annotated[
+            bool,
+            OpenBBField(
+                description="Whether to create a chart or not, by default False."
+            ),
+        ] = False,
         provider: Annotated[
             Optional[Literal["fmp", "polygon", "tiingo", "yfinance"]],
             OpenBBField(
@@ -67,6 +73,8 @@ class ROUTER_crypto_price(Container):
             The number of data entries to return. (provider: polygon)
         exchanges : Union[list[str], str, None]
             To limit the query to a subset of exchanges e.g. ['POLONIEX', 'GDAX'] Multiple comma separated items allowed. (provider: tiingo)
+        chart : bool
+            Whether to create a chart or not, by default False.
 
         Returns
         -------
@@ -135,6 +143,7 @@ class ROUTER_crypto_price(Container):
                     "end_date": end_date,
                 },
                 extra_params=kwargs,
+                chart=chart,
                 info={
                     "symbol": {
                         "fmp": {"multiple_items_allowed": True, "choices": None},

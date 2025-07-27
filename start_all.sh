@@ -62,8 +62,9 @@ else
     nohup ./start_api.sh > ~/openbb_api.log 2>&1 &
     API_PID=$!
     
-    # Wait for API to start
-    sleep 3
+    # Wait for API to start (uvicorn takes time to initialize)
+    echo -e "  Waiting for API server to initialize..."
+    sleep 8
     
     if check_port 8000; then
         echo -e "${GREEN}✅ API Server started (PID: $API_PID)${NC}"

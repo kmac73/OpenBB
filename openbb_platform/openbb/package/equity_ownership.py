@@ -270,9 +270,9 @@ class ROUTER_equity_ownership(Container):
             int, OpenBBField(description="The number of data entries to return.")
         ] = 500,
         provider: Annotated[
-            Optional[Literal["fmp", "intrinio", "sec"]],
+            Optional[Literal["fmp", "intrinio", "sec", "tmx"]],
             OpenBBField(
-                description="The provider to use, by default None. If None, the priority list configured in the settings is used. Default priority: fmp, intrinio, sec."
+                description="The provider to use, by default None. If None, the priority list configured in the settings is used. Default priority: fmp, intrinio, sec, tmx."
             ),
         ] = None,
         **kwargs
@@ -282,7 +282,7 @@ class ROUTER_equity_ownership(Container):
         Parameters
         ----------
         provider : str
-            The provider to use, by default None. If None, the priority list configured in the settings is used. Default priority: fmp, intrinio, sec.
+            The provider to use, by default None. If None, the priority list configured in the settings is used. Default priority: fmp, intrinio, sec, tmx.
         symbol : str
             Symbol to get data for.
         limit : int
@@ -299,6 +299,8 @@ class ROUTER_equity_ownership(Container):
             Field to sort by. (provider: intrinio)
         use_cache : bool
             Persist the data locally for future use. Default is True. Each form submission is an individual download and the SEC limits the number of concurrent downloads. This prevents the same file from being downloaded multiple times. (provider: sec)
+        summary : bool
+            Return a summary of the insider activity instead of the individuals. (provider: tmx)
 
         Returns
         -------
@@ -318,13 +320,13 @@ class ROUTER_equity_ownership(Container):
         --------------
         symbol : Optional[str]
             Symbol representing the entity requested in the data.
-        company_cik : Optional[Union[int, str]]
+        company_cik : Optional[Union[str, int]]
             CIK number of the company.
         filing_date : Optional[Union[date, datetime]]
             Filing date of the trade.
         transaction_date : Optional[date]
             Date of the transaction.
-        owner_cik : Optional[Union[int, str]]
+        owner_cik : Optional[Union[str, int]]
             Reporting individual's CIK.
         owner_name : Optional[str]
             Name of the reporting individual.
@@ -363,7 +365,7 @@ class ROUTER_equity_ownership(Container):
         underlying_security_title : Optional[str]
             Name of the underlying non-derivative security related to this derivative transaction. (provider: intrinio);
             Title of the underlying security. (provider: sec)
-        underlying_shares : Optional[Union[int, float]]
+        underlying_shares : Optional[Union[float, int]]
             Number of underlying shares related to this derivative transaction. (provider: intrinio)
         nature_of_ownership : Optional[str]
             Nature of ownership of the insider trading. (provider: intrinio);
@@ -400,6 +402,20 @@ class ROUTER_equity_ownership(Container):
             Value of the securities owned after the transaction. (provider: sec)
         footnote : Optional[str]
             Footnote for the transaction. (provider: sec)
+        period : Optional[str]
+            The period of the activity. Bucketed by three, six, and twelve months. (provider: tmx)
+        acquisition_or_deposition : Optional[str]
+            Whether the insider bought or sold the shares. (provider: tmx)
+        number_of_trades : Optional[int]
+            The number of shares traded over the period. (provider: tmx)
+        trade_value : Optional[float]
+            The value of the shares traded by the insider. (provider: tmx)
+        securities_bought : Optional[int]
+            The total number of shares bought by all insiders over the period. (provider: tmx)
+        securities_sold : Optional[int]
+            The total number of shares sold by all insiders over the period. (provider: tmx)
+        net_activity : Optional[int]
+            The total net activity by all insiders over the period. (provider: tmx)
 
         Examples
         --------
@@ -415,7 +431,7 @@ class ROUTER_equity_ownership(Container):
                     "provider": self._get_provider(
                         provider,
                         "equity.ownership.insider_trading",
-                        ("fmp", "intrinio", "sec"),
+                        ("fmp", "intrinio", "sec", "tmx"),
                     )
                 },
                 standard_params={

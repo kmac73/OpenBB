@@ -12,42 +12,66 @@ Routers:
     /crypto
     /currency
     /derivatives
+    /econometrics
     /economy
     /equity
     /etf
+    /famafrench
     /fixedincome
     /index
     /news
+    /quantitative
     /regulators
+    /technical
 
 Extensions:
     - commodity@1.3.2
     - crypto@1.4.2
     - currency@1.4.2
     - derivatives@1.4.2
+    - econometrics@1.5.4
     - economy@1.4.3
     - equity@1.4.2
     - etf@1.4.2
+    - famafrench@1.0.0
     - fixedincome@1.4.4
     - index@1.4.2
     - news@1.4.2
+    - quantitative@1.4.4
     - regulators@1.4.3
+    - technical@1.4.4
 
+    - alpha_vantage@1.4.2
     - benzinga@1.4.2
+    - biztoc@1.4.3
     - bls@1.1.3
+    - cboe@1.4.2
     - cftc@1.1.2
+    - deribit@1.0.2
+    - ecb@1.4.3
     - econdb@1.3.2
+    - famafranch@1.0.0
     - federal_reserve@1.4.4
+    - finra@1.4.2
+    - finviz@1.3.2
     - fmp@1.4.3
     - fred@1.4.5
+    - government_us@1.4.2
     - imf@1.1.2
     - intrinio@1.4.2
+    - multpl@1.1.2
+    - nasdaq@1.4.2
     - oecd@1.4.2
     - polygon@1.4.2
     - sec@1.4.5
+    - seeking_alpha@1.4.2
+    - stockgrid@1.4.2
     - tiingo@1.4.2
+    - tmx@1.3.3
+    - tradier@1.3.2
     - tradingeconomics@1.4.2
     - us_eia@1.1.2
+    - wsj@1.4.2
     - yfinance@1.4.7    """
     # fmt: on
 
@@ -83,6 +107,13 @@ Extensions:
         return derivatives.ROUTER_derivatives(command_runner=self._command_runner)
 
     @property
+    def econometrics(self):
+        # pylint: disable=import-outside-toplevel
+        from . import econometrics
+
+        return econometrics.ROUTER_econometrics(command_runner=self._command_runner)
+
+    @property
     def economy(self):
         # pylint: disable=import-outside-toplevel
         from . import economy
@@ -102,6 +133,13 @@ Extensions:
         from . import etf
 
         return etf.ROUTER_etf(command_runner=self._command_runner)
+
+    @property
+    def famafrench(self):
+        # pylint: disable=import-outside-toplevel
+        from . import famafrench
+
+        return famafrench.ROUTER_famafrench(command_runner=self._command_runner)
 
     @property
     def fixedincome(self):
@@ -125,8 +163,22 @@ Extensions:
         return news.ROUTER_news(command_runner=self._command_runner)
 
     @property
+    def quantitative(self):
+        # pylint: disable=import-outside-toplevel
+        from . import quantitative
+
+        return quantitative.ROUTER_quantitative(command_runner=self._command_runner)
+
+    @property
     def regulators(self):
         # pylint: disable=import-outside-toplevel
         from . import regulators
 
         return regulators.ROUTER_regulators(command_runner=self._command_runner)
+
+    @property
+    def technical(self):
+        # pylint: disable=import-outside-toplevel
+        from . import technical
+
+        return technical.ROUTER_technical(command_runner=self._command_runner)

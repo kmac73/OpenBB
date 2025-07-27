@@ -176,6 +176,12 @@ class ROUTER_economy_survey(Container):
             Union[datetime.date, None, str],
             OpenBBField(description="End date of the data, in YYYY-MM-DD format."),
         ] = None,
+        chart: Annotated[
+            bool,
+            OpenBBField(
+                description="Whether to create a chart or not, by default False."
+            ),
+        ] = False,
         provider: Annotated[
             Optional[Literal["bls"]],
             OpenBBField(
@@ -202,6 +208,8 @@ class ROUTER_economy_survey(Container):
             Include annual averages in the response, if available. Default is False. (provider: bls)
         aspects : bool
             Include all aspects associated with a data point for a given BLS series ID, if available. Returned with the series metadata, under `extras` of the response object. Default is False. (provider: bls)
+        chart : bool
+            Whether to create a chart or not, by default False.
 
         Returns
         -------
@@ -270,6 +278,7 @@ class ROUTER_economy_survey(Container):
                     "end_date": end_date,
                 },
                 extra_params=kwargs,
+                chart=chart,
                 info={
                     "symbol": {"bls": {"multiple_items_allowed": True, "choices": None}}
                 },
@@ -683,7 +692,7 @@ class ROUTER_economy_survey(Container):
     def nonfarm_payrolls(
         self,
         date: Annotated[
-            Union[str, datetime.date, None, list[Union[str, datetime.date, None]]],
+            Union[datetime.date, str, None, list[Union[datetime.date, str, None]]],
             OpenBBField(
                 description="A specific date to get data for. Default is the latest report. Multiple comma separated items allowed for provider(s): fred."
             ),
@@ -702,7 +711,7 @@ class ROUTER_economy_survey(Container):
         ----------
         provider : str
             The provider to use, by default None. If None, the priority list configured in the settings is used. Default priority: fred.
-        date : Union[str, date, None, list[Union[str, date, None]]]
+        date : Union[date, str, None, list[Union[date, str, None]]]
             A specific date to get data for. Default is the latest report. Multiple comma separated items allowed for provider(s): fred.
         category : Literal['employees_nsa', 'employees_sa', 'employees_production_and_nonsupervisory', 'employees_women', 'employees_women_percent', 'avg_hours', 'avg_hours_production_and_nonsupervisory', 'avg_hours_overtime', 'avg_hours_overtime_production_and_nonsupervisory', 'avg_earnings_hourly', 'avg_earnings_hourly_production_and_nonsupervisory', 'avg_earnings_weekly', 'avg_earnings_weekly_production_and_nonsupervisory', 'index_weekly_hours', 'index_weekly_hours_production_and_nonsupervisory', 'index_weekly_payrolls', 'index_weekly_payrolls_production_and_nonsupervisory']
             The category to query. (provider: fred)

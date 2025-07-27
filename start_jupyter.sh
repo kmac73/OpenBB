@@ -25,10 +25,11 @@ fi
 
 # Check if jupyter is already running
 if pgrep -f jupyter-lab > /dev/null; then
-    echo -e "${YELLOW}⚠ Jupyter Lab is already running${NC}"
+    echo -e "${GREEN}✅ Jupyter Lab is already running${NC}"
+    echo -e "  Available at: ${YELLOW}http://localhost:8888${NC}"
     echo -e "  Use ${YELLOW}jps${NC} to see processes"
     echo -e "  Use ${YELLOW}jstop${NC} to stop existing processes"
-    exit 1
+    exit 0
 fi
 
 # Check if jupyter is installed
@@ -43,13 +44,13 @@ echo -e "  Port: ${YELLOW}8888${NC}"
 echo -e "  Log file: ${YELLOW}~/jupyter.log${NC}"
 echo ""
 echo -e "${GREEN}✓${NC} Jupyter Lab will be available at: ${YELLOW}http://localhost:8888${NC}"
-echo -e "${GREEN}✓${NC} Examples available in: ${YELLOW}./examples/${NC}"
+echo -e "${GREEN}✓${NC} Examples available in: ${YELLOW}./notebooks/examples/${NC}"
 echo ""
 
-# Change to examples directory if it exists
-if [ -d "examples" ]; then
-    cd examples
-    echo -e "${BLUE}Starting in examples directory...${NC}"
+# Change to notebooks directory if it exists
+if [ -d "notebooks" ]; then
+    cd notebooks
+    echo -e "${BLUE}Starting in notebooks directory...${NC}"
 fi
 
 # Start Jupyter Lab in background with logging (matches your alias style)
@@ -61,7 +62,7 @@ nohup jupyter lab \
     --allow-root > ~/jupyter.log 2>&1 &
 
 # Wait a moment for startup
-sleep 2
+sleep 3
 
 # Check if it started successfully
 if pgrep -f jupyter-lab > /dev/null; then

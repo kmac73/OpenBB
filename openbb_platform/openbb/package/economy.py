@@ -125,7 +125,7 @@ class ROUTER_economy(Container):
             The name of the table associated with the symbol. (provider: imf)
         level : Optional[int]
             The indentation level of the data, relative to the table and symbol_root (provider: imf)
-        order : Optional[Union[int, float]]
+        order : Optional[Union[float, int]]
             Order of the data, relative to the table. (provider: imf)
         children : Optional[str]
             The symbol of the child data, if any. (provider: imf)
@@ -161,9 +161,9 @@ class ROUTER_economy(Container):
     def balance_of_payments(
         self,
         provider: Annotated[
-            Optional[Literal["fred"]],
+            Optional[Literal["ecb", "fred"]],
             OpenBBField(
-                description="The provider to use, by default None. If None, the priority list configured in the settings is used. Default priority: fred."
+                description="The provider to use, by default None. If None, the priority list configured in the settings is used. Default priority: ecb, fred."
             ),
         ] = None,
         **kwargs
@@ -173,9 +173,13 @@ class ROUTER_economy(Container):
         Parameters
         ----------
         provider : str
-            The provider to use, by default None. If None, the priority list configured in the settings is used. Default priority: fred.
-        country : Literal['argentina', 'australia', 'austria', 'belgium', 'brazil', 'canada', 'chile', 'china', 'colombia', 'costa_rica', 'czechia', 'denmark', 'estonia', 'finland', 'france', 'germany', 'greece', 'hungary', 'iceland', 'india', 'indonesia', 'ireland', 'israel', 'italy', 'japan', 'korea', 'latvia', 'lithuania', 'luxembourg', 'mexico', 'netherlands', 'new_zealand', 'norway', 'poland', 'portugal', 'russia', 'saudi_arabia', 'slovak_republic', 'slovenia', 'south_africa', 'spain', 'sweden', 'switzerland', 'turkey', 'united_kingdom', 'united_states', 'g7', 'g20']
-            The country to get data. Enter as a 3-letter ISO country code, default is USA. (provider: fred)
+            The provider to use, by default None. If None, the priority list configured in the settings is used. Default priority: ecb, fred.
+        report_type : Literal['main', 'summary', 'services', 'investment_income', 'direct_investment', 'portfolio_investment', 'other_investment']
+            The report type, the level of detail in the data. (provider: ecb)
+        frequency : Literal['monthly', 'quarterly']
+            The frequency of the data.  Monthly is valid only for ['main', 'summary']. (provider: ecb)
+        country : str
+            The country/region of the data.  This parameter will override the 'report_type' parameter. (provider: ecb)
         start_date : Optional[date]
             Start date of the data, in YYYY-MM-DD format. (provider: fred)
         end_date : Optional[date]
@@ -199,52 +203,230 @@ class ROUTER_economy(Container):
         -----------------
         period : Optional[date]
             The date representing the beginning of the reporting period.
-        balance_percent_of_gdp : Optional[float]
-            Current Account Balance as Percent of GDP
-        balance_total : Optional[float]
-            Current Account Total Balance (USD)
-        balance_total_services : Optional[float]
-            Current Account Total Services Balance (USD)
-        balance_total_secondary_income : Optional[float]
-            Current Account Total Secondary Income Balance (USD)
-        balance_total_goods : Optional[float]
-            Current Account Total Goods Balance (USD)
-        balance_total_primary_income : Optional[float]
-            Current Account Total Primary Income Balance (USD)
-        credits_services_percent_of_goods_and_services : Optional[float]
-            Current Account Credits Services as Percent of Goods and Services
-        credits_services_percent_of_current_account : Optional[float]
-            Current Account Credits Services as Percent of Current Account
-        credits_total_services : Optional[float]
-            Current Account Credits Total Services (USD)
-        credits_total_goods : Optional[float]
-            Current Account Credits Total Goods (USD)
-        credits_total_primary_income : Optional[float]
-            Current Account Credits Total Primary Income (USD)
-        credits_total_secondary_income : Optional[float]
-            Current Account Credits Total Secondary Income (USD)
-        credits_total : Optional[float]
-            Current Account Credits Total (USD)
-        debits_services_percent_of_goods_and_services : Optional[float]
-            Current Account Debits Services as Percent of Goods and Services
-        debits_services_percent_of_current_account : Optional[float]
-            Current Account Debits Services as Percent of Current Account
-        debits_total_services : Optional[float]
-            Current Account Debits Total Services (USD)
-        debits_total_goods : Optional[float]
-            Current Account Debits Total Goods (USD)
-        debits_total_primary_income : Optional[float]
-            Current Account Debits Total Primary Income (USD)
-        debits_total : Optional[float]
-            Current Account Debits Total (USD)
-        debits_total_secondary_income : Optional[float]
-            Current Account Debits Total Secondary Income (USD)
+        current_account : Optional[float]
+            Current Account Balance (Billions of EUR)
+        goods : Optional[float]
+            Goods Balance (Billions of EUR)
+        services : Optional[float]
+            Services Balance (Billions of EUR)
+        primary_income : Optional[float]
+            Primary Income Balance (Billions of EUR)
+        secondary_income : Optional[float]
+            Secondary Income Balance (Billions of EUR)
+        capital_account : Optional[float]
+            Capital Account Balance (Billions of EUR)
+        net_lending_to_rest_of_world : Optional[float]
+            Balance of net lending to the rest of the world (Billions of EUR)
+        financial_account : Optional[float]
+            Financial Account Balance (Billions of EUR)
+        direct_investment : Optional[float]
+            Direct Investment Balance (Billions of EUR)
+        portfolio_investment : Optional[float]
+            Portfolio Investment Balance (Billions of EUR)
+        financial_derivatives : Optional[float]
+            Financial Derivatives Balance (Billions of EUR)
+        other_investment : Optional[float]
+            Other Investment Balance (Billions of EUR)
+        reserve_assets : Optional[float]
+            Reserve Assets Balance (Billions of EUR)
+        errors_and_ommissions : Optional[float]
+            Errors and Omissions (Billions of EUR)
+        current_account_credit : Optional[float]
+            Current Account Credits (Billions of EUR)
+        current_account_debit : Optional[float]
+            Current Account Debits (Billions of EUR)
+        current_account_balance : Optional[float]
+            Current Account Balance (Billions of EUR)
+        goods_credit : Optional[float]
+            Goods Credits (Billions of EUR)
+        goods_debit : Optional[float]
+            Goods Debits (Billions of EUR)
+        services_credit : Optional[float]
+            Services Credits (Billions of EUR)
+        services_debit : Optional[float]
+            Services Debits (Billions of EUR)
+        primary_income_credit : Optional[float]
+            Primary Income Credits (Billions of EUR)
+        primary_income_employee_compensation_credit : Optional[float]
+            Primary Income Employee Compensation Credit (Billions of EUR)
+        primary_income_debit : Optional[float]
+            Primary Income Debits (Billions of EUR)
+        primary_income_employee_compensation_debit : Optional[float]
+            Primary Income Employee Compensation Debit (Billions of EUR)
+        secondary_income_credit : Optional[float]
+            Secondary Income Credits (Billions of EUR)
+        secondary_income_debit : Optional[float]
+            Secondary Income Debits (Billions of EUR)
+        capital_account_credit : Optional[float]
+            Capital Account Credits (Billions of EUR)
+        capital_account_debit : Optional[float]
+            Capital Account Debits (Billions of EUR)
+        services_total_credit : Optional[float]
+            Services Total Credit (Billions of EUR)
+        services_total_debit : Optional[float]
+            Services Total Debit (Billions of EUR)
+        transport_credit : Optional[float]
+            Transport Credit (Billions of EUR)
+        transport_debit : Optional[float]
+            Transport Debit (Billions of EUR)
+        travel_credit : Optional[float]
+            Travel Credit (Billions of EUR)
+        travel_debit : Optional[float]
+            Travel Debit (Billions of EUR)
+        financial_services_credit : Optional[float]
+            Financial Services Credit (Billions of EUR)
+        financial_services_debit : Optional[float]
+            Financial Services Debit (Billions of EUR)
+        communications_credit : Optional[float]
+            Communications Credit (Billions of EUR)
+        communications_debit : Optional[float]
+            Communications Debit (Billions of EUR)
+        other_business_services_credit : Optional[float]
+            Other Business Services Credit (Billions of EUR)
+        other_business_services_debit : Optional[float]
+            Other Business Services Debit (Billions of EUR)
+        other_services_credit : Optional[float]
+            Other Services Credit (Billions of EUR)
+        other_services_debit : Optional[float]
+            Other Services Debit (Billions of EUR)
+        investment_total_credit : Optional[float]
+            Investment Total Credit (Billions of EUR)
+        investment_total_debit : Optional[float]
+            Investment Total Debit (Billions of EUR)
+        equity_credit : Optional[float]
+            Equity Credit (Billions of EUR)
+        equity_reinvested_earnings_credit : Optional[float]
+            Equity Reinvested Earnings Credit (Billions of EUR)
+        equity_debit : Optional[float]
+            Equity Debit (Billions of EUR)
+        equity_reinvested_earnings_debit : Optional[float]
+            Equity Reinvested Earnings Debit (Billions of EUR)
+        debt_instruments_credit : Optional[float]
+            Debt Instruments Credit (Billions of EUR)
+        debt_instruments_debit : Optional[float]
+            Debt Instruments Debit (Billions of EUR)
+        portfolio_investment_equity_credit : Optional[float]
+            Portfolio Investment Equity Credit (Billions of EUR)
+        portfolio_investment_equity_debit : Optional[float]
+            Portfolio Investment Equity Debit (Billions of EUR)
+        portfolio_investment_debt_instruments_credit : Optional[float]
+            Portfolio Investment Debt Instruments Credit (Billions of EUR)
+        portofolio_investment_debt_instruments_debit : Optional[float]
+            Portfolio Investment Debt Instruments Debit (Billions of EUR)
+        other_investment_credit : Optional[float]
+            Other Investment Credit (Billions of EUR)
+        other_investment_debit : Optional[float]
+            Other Investment Debit (Billions of EUR)
+        reserve_assets_credit : Optional[float]
+            Reserve Assets Credit (Billions of EUR)
+        assets_total : Optional[float]
+            Assets Total (Billions of EUR)
+        assets_equity : Optional[float]
+            Assets Equity (Billions of EUR)
+        assets_debt_instruments : Optional[float]
+            Assets Debt Instruments (Billions of EUR)
+        assets_mfi : Optional[float]
+            Assets MFIs (Billions of EUR)
+        assets_non_mfi : Optional[float]
+            Assets Non MFIs (Billions of EUR)
+        assets_direct_investment_abroad : Optional[float]
+            Assets Direct Investment Abroad (Billions of EUR)
+        liabilities_total : Optional[float]
+            Liabilities Total (Billions of EUR)
+        liabilities_equity : Optional[float]
+            Liabilities Equity (Billions of EUR)
+        liabilities_debt_instruments : Optional[float]
+            Liabilities Debt Instruments (Billions of EUR)
+        liabilities_mfi : Optional[float]
+            Liabilities MFIs (Billions of EUR)
+        liabilities_non_mfi : Optional[float]
+            Liabilities Non MFIs (Billions of EUR)
+        liabilities_direct_investment_euro_area : Optional[float]
+            Liabilities Direct Investment in Euro Area (Billions of EUR)
+        assets_equity_and_fund_shares : Optional[float]
+            Assets Equity and Investment Fund Shares (Billions of EUR)
+        assets_equity_shares : Optional[float]
+            Assets Equity Shares (Billions of EUR)
+        assets_investment_fund_shares : Optional[float]
+            Assets Investment Fund Shares (Billions of EUR)
+        assets_debt_short_term : Optional[float]
+            Assets Debt Short Term (Billions of EUR)
+        assets_debt_long_term : Optional[float]
+            Assets Debt Long Term (Billions of EUR)
+        assets_resident_sector_eurosystem : Optional[float]
+            Assets Resident Sector Eurosystem (Billions of EUR)
+        assets_resident_sector_mfi_ex_eurosystem : Optional[float]
+            Assets Resident Sector MFIs outside Eurosystem (Billions of EUR)
+        assets_resident_sector_government : Optional[float]
+            Assets Resident Sector Government (Billions of EUR)
+        assets_resident_sector_other : Optional[float]
+            Assets Resident Sector Other (Billions of EUR)
+        liabilities_equity_and_fund_shares : Optional[float]
+            Liabilities Equity and Investment Fund Shares (Billions of EUR)
+        liabilities_investment_fund_shares : Optional[float]
+            Liabilities Investment Fund Shares (Billions of EUR)
+        liabilities_debt_short_term : Optional[float]
+            Liabilities Debt Short Term (Billions of EUR)
+        liabilities_debt_long_term : Optional[float]
+            Liabilities Debt Long Term (Billions of EUR)
+        liabilities_resident_sector_government : Optional[float]
+            Liabilities Resident Sector Government (Billions of EUR)
+        liabilities_resident_sector_other : Optional[float]
+            Liabilities Resident Sector Other (Billions of EUR)
+        assets_currency_and_deposits : Optional[float]
+            Assets Currency and Deposits (Billions of EUR)
+        assets_loans : Optional[float]
+            Assets Loans (Billions of EUR)
+        assets_trade_credit_and_advances : Optional[float]
+            Assets Trade Credits and Advances (Billions of EUR)
+        assets_eurosystem : Optional[float]
+            Assets Eurosystem (Billions of EUR)
+        assets_other_mfi_ex_eurosystem : Optional[float]
+            Assets Other MFIs outside Eurosystem (Billions of EUR)
+        assets_government : Optional[float]
+            Assets Government (Billions of EUR)
+        assets_other_sectors : Optional[float]
+            Assets Other Sectors (Billions of EUR)
+        liabilities_currency_and_deposits : Optional[float]
+            Liabilities Currency and Deposits (Billions of EUR)
+        liabilities_loans : Optional[float]
+            Liabilities Loans (Billions of EUR)
+        liabilities_trade_credit_and_advances : Optional[float]
+            Liabilities Trade Credits and Advances (Billions of EUR)
+        liabilities_eurosystem : Optional[float]
+            Liabilities Eurosystem (Billions of EUR)
+        liabilities_other_mfi_ex_eurosystem : Optional[float]
+            Liabilities Other MFIs outside Eurosystem (Billions of EUR)
+        liabilities_government : Optional[float]
+            Liabilities Government (Billions of EUR)
+        liabilities_other_sectors : Optional[float]
+            Liabilities Other Sectors (Billions of EUR)
+        goods_balance : Optional[float]
+            Goods Balance (Billions of EUR)
+        services_balance : Optional[float]
+            Services Balance (Billions of EUR)
+        primary_income_balance : Optional[float]
+            Primary Income Balance (Billions of EUR)
+        investment_income_balance : Optional[float]
+            Investment Income Balance (Billions of EUR)
+        investment_income_credit : Optional[float]
+            Investment Income Credits (Billions of EUR)
+        investment_income_debit : Optional[float]
+            Investment Income Debits (Billions of EUR)
+        secondary_income_balance : Optional[float]
+            Secondary Income Balance (Billions of EUR)
+        capital_account_balance : Optional[float]
+            Capital Account Balance (Billions of EUR)
 
         Examples
         --------
         >>> from openbb import obb
         >>> obb.economy.balance_of_payments(provider='fred')
         >>> obb.economy.balance_of_payments(provider='fred', country='brazil')
+        >>> obb.economy.balance_of_payments(provider='ecb')
+        >>> obb.economy.balance_of_payments(report_type='summary', provider='ecb')
+        >>> # The `country` parameter will override the `report_type`.
+        >>> obb.economy.balance_of_payments(country='united_states', provider='ecb')
         """  # noqa: E501
 
         return self._run(
@@ -254,7 +436,7 @@ class ROUTER_economy(Container):
                     "provider": self._get_provider(
                         provider,
                         "economy.balance_of_payments",
-                        ("fred",),
+                        ("ecb", "fred"),
                     )
                 },
                 standard_params={},
@@ -332,9 +514,9 @@ class ROUTER_economy(Container):
             OpenBBField(description="End date of the data, in YYYY-MM-DD format."),
         ] = None,
         provider: Annotated[
-            Optional[Literal["fmp", "tradingeconomics"]],
+            Optional[Literal["fmp", "nasdaq", "tradingeconomics"]],
             OpenBBField(
-                description="The provider to use, by default None. If None, the priority list configured in the settings is used. Default priority: fmp, tradingeconomics."
+                description="The provider to use, by default None. If None, the priority list configured in the settings is used. Default priority: fmp, nasdaq, tradingeconomics."
             ),
         ] = None,
         **kwargs
@@ -344,13 +526,13 @@ class ROUTER_economy(Container):
         Parameters
         ----------
         provider : str
-            The provider to use, by default None. If None, the priority list configured in the settings is used. Default priority: fmp, tradingeconomics.
+            The provider to use, by default None. If None, the priority list configured in the settings is used. Default priority: fmp, nasdaq, tradingeconomics.
         start_date : Union[date, None, str]
             Start date of the data, in YYYY-MM-DD format.
         end_date : Union[date, None, str]
             End date of the data, in YYYY-MM-DD format.
         country : Optional[str]
-            Country of the event. Multiple comma separated items allowed. (provider: tradingeconomics)
+            Country of the event Multiple comma separated items allowed. (provider: nasdaq, tradingeconomics)
         importance : Optional[Literal['low', 'medium', 'high']]
             Importance of the event. (provider: tradingeconomics)
         group : Optional[Literal['interest_rate', 'inflation', 'bonds', 'consumer', 'gdp', 'government', 'housing', 'labour', 'markets', 'money', 'prices', 'trade', 'business']]
@@ -390,13 +572,13 @@ class ROUTER_economy(Container):
             Currency of the data.
         unit : Optional[str]
             Unit of the data.
-        consensus : Optional[Union[str, float]]
+        consensus : Optional[Union[float, str]]
             Average forecast among a representative group of economists.
-        previous : Optional[Union[str, float]]
+        previous : Optional[Union[float, str]]
             Value for the previous period after the revision (if revision is applicable).
-        revised : Optional[Union[str, float]]
+        revised : Optional[Union[float, str]]
             Revised previous value, if applicable.
-        actual : Optional[Union[str, float]]
+        actual : Optional[Union[float, str]]
             Latest released value.
         change : Optional[float]
             Value change since previous. (provider: fmp)
@@ -407,6 +589,8 @@ class ROUTER_economy(Container):
             Last update of the data. (provider: tradingeconomics)
         created_at : Optional[datetime]
             Created at timestamp. (provider: fmp)
+        description : Optional[str]
+            Event description. (provider: nasdaq)
         forecast : Optional[Union[str, float]]
             TradingEconomics projections. (provider: tradingeconomics)
         reference : Optional[str]
@@ -432,6 +616,8 @@ class ROUTER_economy(Container):
         >>> # By default, the calendar will be forward-looking.
         >>> obb.economy.calendar(provider='fmp')
         >>> obb.economy.calendar(provider='fmp', start_date='2020-03-01', end_date='2020-03-31')
+        >>> # By default, the calendar will be forward-looking.
+        >>> obb.economy.calendar(provider='nasdaq')
         """  # noqa: E501
 
         return self._run(
@@ -441,7 +627,7 @@ class ROUTER_economy(Container):
                     "provider": self._get_provider(
                         provider,
                         "economy.calendar",
-                        ("fmp", "tradingeconomics"),
+                        ("fmp", "nasdaq", "tradingeconomics"),
                     )
                 },
                 standard_params={
@@ -451,6 +637,7 @@ class ROUTER_economy(Container):
                 extra_params=kwargs,
                 info={
                     "country": {
+                        "nasdaq": {"multiple_items_allowed": True, "choices": None},
                         "tradingeconomics": {
                             "multiple_items_allowed": True,
                             "choices": [
@@ -652,7 +839,7 @@ class ROUTER_economy(Container):
                                 "zambia",
                                 "zimbabwe",
                             ],
-                        }
+                        },
                     },
                     "importance": {
                         "tradingeconomics": {
@@ -2374,7 +2561,7 @@ class ROUTER_economy(Container):
             The name of the region. (provider: fred)
         code : Optional[Union[str, int]]
             The code of the region. (provider: fred)
-        value : Optional[Union[int, float]]
+        value : Optional[Union[float, int]]
             The obersvation value. The units are defined in the search results by series ID. (provider: fred)
         series_id : Optional[str]
             The individual series ID for the region. (provider: fred)
@@ -2424,7 +2611,7 @@ class ROUTER_economy(Container):
             ),
         ] = None,
         date: Annotated[
-            Union[str, datetime.date, None, list[Union[str, datetime.date, None]]],
+            Union[datetime.date, str, None, list[Union[datetime.date, str, None]]],
             OpenBBField(
                 description="A specific date to get data for. Multiple comma separated items allowed for provider(s): fred."
             ),
@@ -2447,7 +2634,7 @@ class ROUTER_economy(Container):
             The ID of the release. Use `fred_search` to find releases.
         element_id : Optional[str]
             The element ID of a specific table in the release.
-        date : Union[str, date, None, list[Union[str, date, None]]]
+        date : Union[date, str, None, list[Union[date, str, None]]]
             A specific date to get data for. Multiple comma separated items allowed for provider(s): fred.
 
         Returns
@@ -2710,6 +2897,12 @@ class ROUTER_economy(Container):
             Optional[int],
             OpenBBField(description="The number of data entries to return."),
         ] = 100000,
+        chart: Annotated[
+            bool,
+            OpenBBField(
+                description="Whether to create a chart or not, by default False."
+            ),
+        ] = False,
         provider: Annotated[
             Optional[Literal["fred", "intrinio"]],
             OpenBBField(
@@ -2773,6 +2966,8 @@ class ROUTER_economy(Container):
             Returns all pages of data from the API call at once. (provider: intrinio)
         sleep : Optional[float]
             Time to sleep between requests to avoid rate limiting. (provider: intrinio)
+        chart : bool
+            Whether to create a chart or not, by default False.
 
         Returns
         -------
@@ -2822,6 +3017,7 @@ class ROUTER_economy(Container):
                     "limit": limit,
                 },
                 extra_params=kwargs,
+                chart=chart,
                 info={
                     "symbol": {
                         "fred": {"multiple_items_allowed": True, "choices": None}
@@ -3293,7 +3489,7 @@ class ROUTER_economy(Container):
                 Symbol representing the entity requested in the data.
             country : Optional[str]
                 The country represented by the data.
-            value : Optional[Union[int, float]]
+            value : Optional[Union[float, int]]
 
             unit : Optional[str]
                 The unit of the value. (provider: imf)
@@ -3303,7 +3499,7 @@ class ROUTER_economy(Container):
                 The name of the table associated with the symbol. (provider: imf)
             level : Optional[int]
                 The indentation level of the data, relative to the table and symbol_root (provider: imf)
-            order : Optional[Union[int, float]]
+            order : Optional[Union[float, int]]
                 Order of the data, relative to the table. (provider: imf)
             reference_sector : Optional[str]
                 The reference sector for the data. (provider: imf)
@@ -3964,7 +4160,7 @@ class ROUTER_economy(Container):
     def pce(
         self,
         date: Annotated[
-            Union[str, datetime.date, None, list[Union[str, datetime.date, None]]],
+            Union[datetime.date, str, None, list[Union[datetime.date, str, None]]],
             OpenBBField(
                 description="A specific date to get data for. Default is the latest report. Multiple comma separated items allowed for provider(s): fred."
             ),
@@ -3983,7 +4179,7 @@ class ROUTER_economy(Container):
         ----------
         provider : str
             The provider to use, by default None. If None, the priority list configured in the settings is used. Default priority: fred.
-        date : Union[str, date, None, list[Union[str, date, None]]]
+        date : Union[date, str, None, list[Union[date, str, None]]]
             A specific date to get data for. Default is the latest report. Multiple comma separated items allowed for provider(s): fred.
         category : Literal['personal_income', 'wages_by_industry', 'real_pce_percent_change', 'real_pce_quantity_index', 'pce_price_index', 'pce_dollars', 'real_pce_chained_dollars', 'pce_price_percent_change']
             The category to query. (provider: fred)

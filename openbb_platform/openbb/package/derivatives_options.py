@@ -1,6 +1,11 @@
 ### THIS FILE IS AUTO-GENERATED. DO NOT EDIT. ###
 
-from typing import Any, Literal, Optional, Union
+from typing import (
+    Any,
+    Literal,
+    Optional,
+    Union,
+)
 
 from numpy import ndarray
 from openbb_core.app.model.field import OpenBBField
@@ -28,11 +33,18 @@ class ROUTER_derivatives_options(Container):
     @validate
     def chains(
         self,
-        symbol: Annotated[str, OpenBBField(description="Symbol to get data for.")],
-        provider: Annotated[
-            Optional[Literal["intrinio", "yfinance"]],
+        symbol: Annotated[
+            str,
             OpenBBField(
-                description="The provider to use, by default None. If None, the priority list configured in the settings is used. Default priority: intrinio, yfinance."
+                description="Symbol to get data for.\nChoices for deribit: 'BTC', 'ETH', 'SOL', 'XRP', 'BNB', 'PAXG'"
+            ),
+        ],
+        provider: Annotated[
+            Optional[
+                Literal["cboe", "deribit", "intrinio", "tmx", "tradier", "yfinance"]
+            ],
+            OpenBBField(
+                description="The provider to use, by default None. If None, the priority list configured in the settings is used. Default priority: cboe, deribit, intrinio, tmx, tradier, yfinance."
             ),
         ] = None,
         **kwargs
@@ -42,9 +54,12 @@ class ROUTER_derivatives_options(Container):
         Parameters
         ----------
         provider : str
-            The provider to use, by default None. If None, the priority list configured in the settings is used. Default priority: intrinio, yfinance.
+            The provider to use, by default None. If None, the priority list configured in the settings is used. Default priority: cboe, deribit, intrinio, tmx, tradier, yfinance.
         symbol : str
             Symbol to get data for.
+            Choices for deribit: 'BTC', 'ETH', 'SOL', 'XRP', 'BNB', 'PAXG'
+        use_cache : bool
+            When True, the company directories will be cached for24 hours and are used to validate symbols. The results of the function are not cached. Set as False to bypass. (provider: cboe)
         delay : Literal['eod', 'realtime', 'delayed']
             Whether to return delayed, realtime, or eod data. (provider: intrinio)
         date : Optional[date]
@@ -192,6 +207,39 @@ class ROUTER_derivatives_options(Container):
             Vega of the option.
         rho : list[Optional[float]]
             Rho of the option.
+        bid_iv : Union[list[Optional[float]], list[Optional[float]]]
+            The implied volatility of the bid price. (provider: deribit, tradier)
+        ask_iv : Union[list[Optional[float]], list[Optional[float]]]
+            The implied volatility of the ask price. (provider: deribit, tradier)
+        interest_rate : list[Optional[float]]
+            The interest rate used by Deribit to calculate greeks. (provider: deribit)
+        underlying_spot_price : Optional[list[float]]
+            The spot price of the underlying asset. The underlying asset is the specific future or index that the option is based on. (provider: deribit)
+        settlement_price : Union[list[Optional[float]], list[Optional[float]]]
+            The settlement price of the contract. (provider: deribit);
+            Settlement price on that date. (provider: tmx)
+        min_price : list[Optional[float]]
+            The minimum price allowed. (provider: deribit)
+        max_price : list[Optional[float]]
+            The maximum price allowed. (provider: deribit)
+        volume_notional : list[Optional[float]]
+            The notional trading volume of the contract, as USD or USDC. (provider: deribit)
+        timestamp : Optional[list[datetime]]
+            The datetime of the data, as America/New_York time. (provider: deribit)
+        transactions : list[Optional[int]]
+            Number of transactions for the contract. (provider: tmx)
+        total_value : list[Optional[float]]
+            Total value of the transactions. (provider: tmx)
+        phi : list[Optional[float]]
+            Phi of the option. The sensitivity of the option relative to dividend yield. (provider: tradier)
+        orats_final_iv : list[Optional[float]]
+            ORATS final implied volatility of the option, updated once per hour. (provider: tradier)
+        year_high : list[Optional[float]]
+            52-week high price of the option. (provider: tradier)
+        year_low : list[Optional[float]]
+            52-week low price of the option. (provider: tradier)
+        greeks_time : list[Optional[datetime]]
+            Timestamp of the last greeks update. Greeks/IV data is updated once per hour. (provider: tradier)
         in_the_money : list[Optional[bool]]
             Whether the option is in the money. (provider: yfinance)
         currency : list[Optional[str]]
@@ -212,7 +260,7 @@ class ROUTER_derivatives_options(Container):
                     "provider": self._get_provider(
                         provider,
                         "derivatives.options.chains",
-                        ("intrinio", "yfinance"),
+                        ("cboe", "deribit", "intrinio", "tmx", "tradier", "yfinance"),
                     )
                 },
                 standard_params={
@@ -220,6 +268,12 @@ class ROUTER_derivatives_options(Container):
                 },
                 extra_params=kwargs,
                 info={
+                    "symbol": {
+                        "deribit": {
+                            "multiple_items_allowed": False,
+                            "choices": ["BTC", "ETH", "SOL", "XRP", "BNB", "PAXG"],
+                        }
+                    },
                     "delay": {
                         "intrinio": {
                             "multiple_items_allowed": False,
@@ -401,6 +455,12 @@ class ROUTER_derivatives_options(Container):
             Literal["dark", "light"], OpenBBField(description="")
         ] = "dark",
         chart_params: Annotated[Optional[dict], OpenBBField(description="")] = None,
+        chart: Annotated[
+            bool,
+            OpenBBField(
+                description="Whether to create a chart or not, by default False."
+            ),
+        ] = False,
         **kwargs: Any
     ) -> OBBject:
         """Filter and process the options chains data for volatility.
@@ -495,6 +555,7 @@ class ROUTER_derivatives_options(Container):
                 volume=volume,
                 theme=theme,
                 chart_params=chart_params,
+                chart=chart,
                 data_processing=True,
                 **kwargs,
             ),
@@ -532,9 +593,9 @@ class ROUTER_derivatives_options(Container):
             The type of unusual activity to query for. (provider: intrinio)
         sentiment : Optional[Literal['bullish', 'bearish', 'neutral']]
             The sentiment type to query for. (provider: intrinio)
-        min_value : Union[int, float, None]
+        min_value : Union[float, int, None]
             The inclusive minimum total value for the unusual activity. (provider: intrinio)
-        max_value : Union[int, float, None]
+        max_value : Union[float, int, None]
             The inclusive maximum total value for the unusual activity. (provider: intrinio)
         limit : int
             The number of data entries to return. A typical day for all symbols will yield 50-80K records. The API will paginate at 1000 records. The high default limit (100K) is to be able to reliably capture the most days. The high absolute limit (1.25M) is to allow for outlier days. Queries at the absolute limit will take a long time, and might be unreliable. Apply filters to improve performance. (provider: intrinio)

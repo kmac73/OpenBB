@@ -13,13 +13,13 @@ NC='\033[0m'
 
 echo -e "${BLUE}=== Starting Jupyter Lab for OpenBB ===${NC}"
 
-# Activate alfa-class-env
-echo -e "${BLUE}Activating alfa-class-env environment...${NC}"
-source ~/miniconda3/etc/profile.d/conda.sh
-conda activate alfa-class-env
-
-# Check if in conda environment
-if [ -n "$CONDA_DEFAULT_ENV" ]; then
+# Check and activate alfa-class-env if not already active
+if [ "$CONDA_DEFAULT_ENV" != "alfa-class-env" ]; then
+    echo -e "${BLUE}Activating alfa-class-env environment...${NC}"
+    source ~/miniconda3/etc/profile.d/conda.sh
+    conda activate alfa-class-env
+    echo -e "${GREEN}✓${NC} Activated alfa-class-env environment"
+else
     echo -e "${GREEN}✓${NC} Using conda environment: ${YELLOW}$CONDA_DEFAULT_ENV${NC}"
 fi
 
@@ -28,7 +28,8 @@ if pgrep -f jupyter-lab > /dev/null; then
     echo -e "${YELLOW}⚠ Jupyter Lab is already running${NC}"
     echo -e "  Use ${YELLOW}jps${NC} to see processes"
     echo -e "  Use ${YELLOW}jstop${NC} to stop existing processes"
-    exit 1
+    echo -e "${GREEN}✅ Jupyter Lab is accessible at: ${YELLOW}http://localhost:8888${NC}"
+    exit 0
 fi
 
 # Check if jupyter is installed
@@ -43,13 +44,24 @@ echo -e "  Port: ${YELLOW}8888${NC}"
 echo -e "  Log file: ${YELLOW}~/jupyter.log${NC}"
 echo ""
 echo -e "${GREEN}✓${NC} Jupyter Lab will be available at: ${YELLOW}http://localhost:8888${NC}"
-echo -e "${GREEN}✓${NC} Examples available in: ${YELLOW}./examples/${NC}"
+echo -e "${GREEN}✓${NC} Notebooks available in: ${YELLOW}./notebooks/${NC}"
+echo -e "${GREEN}✓${NC} Market data accessible at: ${YELLOW}../market_data/${NC}"
 echo ""
 
-# Change to examples directory if it exists
-if [ -d "examples" ]; then
-    cd examples
-    echo -e "${BLUE}Starting in examples directory...${NC}"
+# Change to notebooks directory, create if it doesn't exist
+if [ ! -d "notebooks" ]; then
+    echo -e "${YELLOW}⚠ Creating notebooks directory...${NC}"
+    mkdir -p notebooks
+fi
+
+cd notebooks
+echo -e "${BLUE}Starting in notebooks/ directory...${NC}"
+
+# Ensure market_data is accessible (create symlink if needed and doesn't exist)
+if [ ! -e "market_data" ] && [ -d "../market_data" ]; then
+    echo -e "${BLUE}Creating symlink to market_data...${NC}"
+    ln -s ../market_data market_data
+    echo -e "${GREEN}✓${NC} market_data/ accessible from notebooks"
 fi
 
 # Start Jupyter Lab in background with logging (matches your alias style)

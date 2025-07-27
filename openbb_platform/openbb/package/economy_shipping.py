@@ -26,6 +26,12 @@ class ROUTER_economy_shipping(Container):
     @validate
     def chokepoint_info(
         self,
+        chart: Annotated[
+            bool,
+            OpenBBField(
+                description="Whether to create a chart or not, by default False."
+            ),
+        ] = False,
         provider: Annotated[
             Optional[Literal["imf"]],
             OpenBBField(
@@ -42,6 +48,8 @@ class ROUTER_economy_shipping(Container):
             The provider to use, by default None. If None, the priority list configured in the settings is used. Default priority: imf.
         theme : Optional[Literal['dark', 'light']]
             Theme for the map. Only valid if `openbb-charting` is installed and `chart` parameter is set to `true`. Default is the 'chart_style' setting in `user_settings.json`, if available, otherwise 'dark'. (provider: imf)
+        chart : bool
+            Whether to create a chart or not, by default False.
 
         Returns
         -------
@@ -104,6 +112,7 @@ class ROUTER_economy_shipping(Container):
                 },
                 standard_params={},
                 extra_params=kwargs,
+                chart=chart,
                 info={"theme": {"imf": {"x-widget_config": {"show": False}}}},
             )
         )
@@ -315,6 +324,12 @@ class ROUTER_economy_shipping(Container):
     @validate
     def port_info(
         self,
+        chart: Annotated[
+            bool,
+            OpenBBField(
+                description="Whether to create a chart or not, by default False."
+            ),
+        ] = False,
         provider: Annotated[
             Optional[Literal["imf"]],
             OpenBBField(
@@ -335,6 +350,8 @@ class ROUTER_economy_shipping(Container):
             Country to focus on. Enter as a 3-letter ISO country code. This parameter supersedes `continent` if both are provided. (provider: imf)
         limit : Optional[int]
             Limit the number of results returned. Limit is determined by the annual average number of vessels transiting through the port. If not provided, all ports are returned. (provider: imf)
+        chart : bool
+            Whether to create a chart or not, by default False.
 
         Returns
         -------
@@ -410,6 +427,7 @@ class ROUTER_economy_shipping(Container):
                 },
                 standard_params={},
                 extra_params=kwargs,
+                chart=chart,
                 info={
                     "continent": {
                         "imf": {

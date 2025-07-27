@@ -15,6 +15,18 @@ NC='\033[0m'
 echo -e "${BLUE}=== OpenBB Complete Environment Startup ===${NC}"
 echo ""
 
+# Check and activate OpenBB-env if not already active
+echo -e "${BLUE}Checking conda environment...${NC}"
+if [ "$CONDA_DEFAULT_ENV" != "OpenBB-env" ]; then
+    echo -e "${YELLOW}⚠ OpenBB-env not active. Activating...${NC}"
+    source ~/miniconda3/etc/profile.d/conda.sh
+    conda activate OpenBB-env
+    echo -e "${GREEN}✓${NC} Activated OpenBB-env environment"
+else
+    echo -e "${GREEN}✓${NC} OpenBB-env already active"
+fi
+echo ""
+
 # Function to check if a port is in use
 check_port() {
     local port=$1
@@ -62,16 +74,22 @@ else
     nohup ./start_api.sh > ~/openbb_api.log 2>&1 &
     API_PID=$!
     
-    # Wait for API to start
-    sleep 3
-    
-    if check_port 8000; then
-        echo -e "${GREEN}✅ API Server started (PID: $API_PID)${NC}"
-        echo $API_PID > ~/.openbb_api.pid
-    else
-        echo -e "${RED}❌ Failed to start API Server${NC}"
-        echo -e "Check logs: ${YELLOW}cat ~/openbb_api.log${NC}"
-    fi
+    # Wait for API to start with retry logic
+    echo -e "${BLUE}Waiting for API server to start...${NC}"
+    for i in {1..10}; do
+        sleep 2
+        if check_port 8000; then
+            echo -e "${GREEN}✅ API Server started (PID: $API_PID)${NC}"
+            echo $API_PID > ~/.openbb_api.pid
+            break
+        fi
+        if [ $i -eq 10 ]; then
+            echo -e "${RED}❌ Failed to start API Server after 20 seconds${NC}"
+            echo -e "Check logs: ${YELLOW}cat ~/openbb_api.log${NC}"
+        else
+            echo -e "${YELLOW}⏳ Attempt $i/10 - waiting...${NC}"
+        fi
+    done
 fi
 
 # Summary

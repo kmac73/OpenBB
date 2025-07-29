@@ -59,6 +59,17 @@ fi
 
 echo -e "${GREEN}✓${NC} OpenBB Platform installed"
 
+# Initialize OpenBB extensions (one-time build process)
+echo ""
+echo -e "${BLUE}Initializing OpenBB extensions...${NC}"
+echo -e "${YELLOW}(This may take a few minutes on first run)${NC}"
+python -c "from openbb import obb; print('OpenBB extensions initialized successfully')" 2>/dev/null
+if [ $? -eq 0 ]; then
+    echo -e "${GREEN}✓${NC} OpenBB extensions ready"
+else
+    echo -e "${YELLOW}⚠${NC} Extension initialization may be in progress"
+fi
+
 # Start Jupyter Lab
 echo ""
 echo -e "${BLUE}Starting Jupyter Lab...${NC}"

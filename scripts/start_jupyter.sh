@@ -45,7 +45,7 @@ fi
 echo -e "${GREEN}✓${NC} Starting Jupyter Lab in background..."
 echo -e "  IP: ${YELLOW}0.0.0.0${NC}"
 echo -e "  Port: ${YELLOW}8888${NC}"
-echo -e "  Log file: ${YELLOW}~/jupyter.log${NC}"
+echo -e "  Log file: ${YELLOW}../logs/jupyter.log${NC}"
 echo ""
 echo -e "${GREEN}✓${NC} Jupyter Lab will be available at: ${YELLOW}http://localhost:8888${NC}"
 echo -e "${GREEN}✓${NC} Notebooks available in: ${YELLOW}./notebooks/${NC}"
@@ -74,7 +74,7 @@ nohup jupyter lab \
     --ip=0.0.0.0 \
     --port=8888 \
     --no-browser \
-    --allow-root > ~/jupyter.log 2>&1 &
+    --allow-root > ../logs/jupyter.log 2>&1 &
 
 # Wait a moment for startup
 sleep 2
@@ -87,9 +87,9 @@ if pgrep -f jupyter-lab > /dev/null; then
     echo -e "  ${YELLOW}jps${NC}     - Show Jupyter processes"
     echo -e "  ${YELLOW}jstop${NC}   - Stop Jupyter Lab"
     echo -e "  ${YELLOW}jkill${NC}   - Kill all Jupyter processes"
-    echo -e "  ${YELLOW}tail -f ~/jupyter.log${NC} - View logs"
+    echo -e "  ${YELLOW}tail -f ../logs/jupyter.log${NC} - View logs"
 else
     echo -e "${RED}❌ Failed to start Jupyter Lab${NC}"
-    echo -e "Check logs: ${YELLOW}cat ~/jupyter.log${NC}"
+    echo -e "Check logs: ${YELLOW}cat ../logs/jupyter.log${NC}"
     exit 1
 fi

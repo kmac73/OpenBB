@@ -96,7 +96,7 @@ else
     cd "$BASE_DIR"
     source ~/miniconda3/etc/profile.d/conda.sh
     conda activate OpenBB-env
-    nohup uvicorn openbb_core.api.rest_api:app --host 0.0.0.0 --port 8000 > ~/openbb_api.log 2>&1 &
+    nohup uvicorn openbb_core.api.rest_api:app --host 0.0.0.0 --port 8000 > ../logs/openbb_api.log 2>&1 &
     API_PID=$!
     
     # Wait for API to start with retry logic
@@ -113,7 +113,7 @@ else
         # Check if process is still running
         if ! kill -0 $API_PID 2>/dev/null; then
             echo -e "${RED}❌ API Server process died${NC}"
-            echo -e "Check logs: ${YELLOW}cat ~/openbb_api.log${NC}"
+            echo -e "Check logs: ${YELLOW}cat ../logs/openbb_api.log${NC}"
             break
         fi
         echo -e "${YELLOW}⏳ Attempt $i/15 - waiting...${NC}"
@@ -121,9 +121,9 @@ else
     
     if [ "$API_STARTED" = "false" ]; then
         echo -e "${RED}❌ Failed to start API Server after 45 seconds${NC}"
-        echo -e "Check logs: ${YELLOW}cat ~/openbb_api.log${NC}"
+        echo -e "Check logs: ${YELLOW}cat ../logs/openbb_api.log${NC}"
         echo -e "Last few lines of log:"
-        tail -n 10 ~/openbb_api.log 2>/dev/null || echo "No log content available"
+        tail -n 10 ../logs/openbb_api.log 2>/dev/null || echo "No log content available"
     fi
 fi
 
@@ -135,7 +135,7 @@ echo ""
 # Jupyter status
 if pgrep -f jupyter-lab > /dev/null; then
     echo -e "${GREEN}✅ Jupyter Lab${NC}      - http://localhost:8888"
-    echo -e "   Logs: ${YELLOW}tail -f ~/jupyter.log${NC}"
+    echo -e "   Logs: ${YELLOW}tail -f ../logs/jupyter.log${NC}"
     echo -e "   Stop: ${YELLOW}jstop${NC}"
 else
     echo -e "${RED}❌ Jupyter Lab${NC}      - Not running"
@@ -145,7 +145,7 @@ fi
 if check_port 8000; then
     echo -e "${GREEN}✅ REST API${NC}         - http://localhost:8000"
     echo -e "   Docs: ${YELLOW}http://localhost:8000/docs${NC}"
-    echo -e "   Logs: ${YELLOW}tail -f ~/openbb_api.log${NC}"
+    echo -e "   Logs: ${YELLOW}tail -f ../logs/openbb_api.log${NC}"
 else
     echo -e "${RED}❌ REST API${NC}         - Not running"
 fi

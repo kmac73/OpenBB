@@ -15,6 +15,11 @@ NC='\033[0m'
 echo -e "${BLUE}=== Stopping OpenBB Services ===${NC}"
 echo ""
 
+# Stop Streamlit App
+echo -e "${BLUE}Stopping Streamlit App...${NC}"
+BASE_DIR="/home/kmm/kevin/git/OpenBB"
+"$BASE_DIR/scripts/stop_streamlit.sh"
+
 # Stop Jupyter Lab (using your existing alias logic)
 echo -e "${BLUE}Stopping Jupyter Lab...${NC}"
 if pgrep -f jupyter-lab > /dev/null; then
@@ -55,7 +60,8 @@ fi
 echo ""
 echo -e "${GREEN}=== All OpenBB services stopped ===${NC}"
 echo ""
-echo -e "${YELLOW}Log files preserved:${NC}"
+echo -e "${YELLOW}Log files preserved in OpenBB/logs/:${NC}"
 echo -e "  ../logs/jupyter.log"
+echo -e "  ../logs/streamlit.log"
 echo -e "  ../logs/openbb_api.log"
 echo ""

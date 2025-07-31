@@ -1,0 +1,21 @@
+[I 2025-07-30 10:44:23.815 ServerApp] jupyter_lsp | extension was successfully linked.
+[I 2025-07-30 10:44:23.819 ServerApp] jupyter_server_terminals | extension was successfully linked.
+[I 2025-07-30 10:44:23.826 ServerApp] jupyterlab | extension was successfully linked.
+[I 2025-07-30 10:44:23.831 ServerApp] notebook | extension was successfully linked.
+[I 2025-07-30 10:44:24.129 ServerApp] notebook_shim | extension was successfully linked.
+[I 2025-07-30 10:44:24.143 ServerApp] notebook_shim | extension was successfully loaded.
+[I 2025-07-30 10:44:24.148 ServerApp] jupyter_lsp | extension was successfully loaded.
+[I 2025-07-30 10:44:24.149 ServerApp] jupyter_server_terminals | extension was successfully loaded.
+[I 2025-07-30 10:44:24.152 LabApp] JupyterLab extension loaded from /home/kmm/miniconda3/envs/OpenBB-env/lib/python3.12/site-packages/jupyterlab
+[I 2025-07-30 10:44:24.152 LabApp] JupyterLab application directory is /home/kmm/miniconda3/envs/OpenBB-env/share/jupyter/lab
+[I 2025-07-30 10:44:24.153 LabApp] Extension Manager is 'pypi'.
+[I 2025-07-30 10:44:24.197 ServerApp] jupyterlab | extension was successfully loaded.
+[I 2025-07-30 10:44:24.201 ServerApp] notebook | extension was successfully loaded.
+[I 2025-07-30 10:44:24.202 ServerApp] Serving notebooks from local directory: /mnt/c/Users/kevin/git/OpenBB/notebooks
+[I 2025-07-30 10:44:24.203 ServerApp] Jupyter Server 2.16.0 is running at:
+[I 2025-07-30 10:44:24.203 ServerApp] http://kmac:8888/lab
+[I 2025-07-30 10:44:24.203 ServerApp]     http://127.0.0.1:8888/lab
+[I 2025-07-30 10:44:24.203 ServerApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[I 2025-07-30 10:44:25.930 ServerApp] Skipped non-installed server(s): bash-language-server, dockerfile-language-server-nodejs, javascript-typescript-langserver, jedi-language-server, julia-language-server, pyright, python-language-server, python-lsp-server, r-languageserver, sql-language-server, texlab, typescript-language-server, unified-language-server, vscode-css-languageserver-bin, vscode-html-languageserver-bin, vscode-json-languageserver-bin, yaml-language-server
+[C 2025-07-31 05:19:34.018 ServerApp] received signal 15, stopping
+[I 2025-07-31 05:19:34.021 ServerApp] Shutting down 5 extensions

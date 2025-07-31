@@ -1,0 +1,92 @@
+============================================================
+SP500 CFD STRATEGY V3 - DEBUG PARAMETERS
+============================================================
+Generated: 2025-07-31 06:53:25
+Strategy: V3 - Innovation Hub
+============================================================
+
+AI FEATURES:
+---------------
+Enable Machine Learning: True
+Market Regime Detection: True
+Adaptive Position Sizing: True
+Market Sentiment Analysis: True
+
+INTELLIGENT RISK MANAGEMENT:
+-----------------------------------
+AI Confidence Threshold: 0.3
+Regime Change Sensitivity: 0.5
+Adaptive Risk Multiplier: 1.0
+
+ACCOUNT CONFIGURATION:
+-------------------------
+Initial Capital: $50,000
+Base Risk Per Trade: 1.0%
+Max Concurrent Positions: 1
+
+INTELLIGENT TRADING RULES:
+------------------------------
+Opening Range Minutes: 30
+Base Entry Threshold Points: 2.0
+Base Stop Loss Points: 4.0
+Base Profit Target Points: 8.0
+Risk-Reward Ratio: 2.0:1
+
+AI-ENHANCED DIRECTIONAL BIAS:
+-----------------------------------
+Short Bias Multiplier: 1.5x
+
+TRANSACTION COSTS:
+--------------------
+Spread Points: 0.8
+Commission Per Trade: $1.0
+
+DATA CONFIGURATION:
+--------------------
+Symbol: SPX
+Start Date: 2024-01-01
+End Date: 2024-03-29
+Frequency: 5M (5-minute intervals)
+
+INNOVATION FEATURES:
+-------------------------
+Show AI Insights: True
+Show Regime Analysis: True
+Show ML Predictions: True
+Show Market Microstructure: True
+
+CALCULATED VALUES:
+--------------------
+Base Position Size: 125 CFDs
+Base Risk Amount: $500.00
+Sample Transaction Cost: $101.00
+Cost as % of Risk: 20.2%
+
+REVOLUTIONARY FEATURES:
+-------------------------
+• AI-Enhanced Feature Engineering: 9 market indicators
+• Machine Learning Pipeline: RandomForest + K-means clustering
+• Market Microstructure Analysis: Price velocity, volume profiling
+• Behavioral Finance Indicators: Fear/Greed index, institutional flow
+• Fractal Market Analysis: Hurst exponent for trend persistence
+• Support/Resistance Detection: Dynamic level identification
+• Market Efficiency Scoring: Entropy-based predictability
+• AI-Enhanced Exit Strategies: Confidence and regime-based
+• Revolutionary UI: Custom CSS, gradient designs, color coding
+• Advanced Analytics Dashboard: Multi-panel visualizations
+
+SYSTEM INFO:
+--------------------
+Working Directory: /mnt/c/Users/kevin/git/OpenBB/app/SP500_CFD_v3
+Parameter File: debug_params_v3_20250731_065325.txt
+Python Version: 3.12.11
+
+AI/ML DEPENDENCIES:
+--------------------
+• Scikit-learn: Available (ML pipeline)
+• Pandas: Available (data processing)
+• Numpy: Available (numerical computations)
+• Plotly: Available (advanced visualizations)
+• Seaborn: Available (enhanced visualizations)
+• Altair: Available (interactive charts)
+• YFinance: Available (additional data sources)

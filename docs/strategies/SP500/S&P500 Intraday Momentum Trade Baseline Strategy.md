@@ -2,7 +2,7 @@
 
 **Technical Parameters**
 
-1. Use Python, Jupyter Notebooks, Streamlit and Matplotlib for analysis and reporting
+1. Use Python, Jupyter Notebooks, Streamlit and Plotly for analysis and reporting
 
 ## **Trade Strategy Parameters**
 

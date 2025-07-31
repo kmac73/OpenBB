@@ -84,6 +84,20 @@ fi
 # Wait a moment
 sleep 1
 
+# Start Streamlit App
+echo ""
+echo -e "${BLUE}Starting Streamlit App...${NC}"
+"$BASE_DIR/scripts/start_streamlit.sh"
+
+if [ $? -eq 0 ]; then
+    echo -e "${GREEN}✅ Streamlit App started${NC}"
+else
+    echo -e "${RED}❌ Failed to start Streamlit App${NC}"
+fi
+
+# Wait a moment
+sleep 1
+
 # Start API Server
 echo ""
 echo -e "${BLUE}Starting API Server...${NC}"
@@ -92,11 +106,14 @@ if check_port 8000; then
     echo -e "${YELLOW}⚠ Port 8000 is already in use${NC}"
     echo -e "  API server may already be running"
 else
+    # Ensure logs directory exists
+    mkdir -p "$BASE_DIR/logs"
+    
     # Start API server in background using a more robust approach
     cd "$BASE_DIR"
     source ~/miniconda3/etc/profile.d/conda.sh
     conda activate OpenBB-env
-    nohup uvicorn openbb_core.api.rest_api:app --host 0.0.0.0 --port 8000 > ../logs/openbb_api.log 2>&1 &
+    nohup uvicorn openbb_core.api.rest_api:app --host 0.0.0.0 --port 8000 > logs/openbb_api.log 2>&1 &
     API_PID=$!
     
     # Wait for API to start with retry logic
@@ -121,9 +138,9 @@ else
     
     if [ "$API_STARTED" = "false" ]; then
         echo -e "${RED}❌ Failed to start API Server after 45 seconds${NC}"
-        echo -e "Check logs: ${YELLOW}cat ../logs/openbb_api.log${NC}"
+        echo -e "Check logs: ${YELLOW}cat logs/openbb_api.log${NC}"
         echo -e "Last few lines of log:"
-        tail -n 10 ../logs/openbb_api.log 2>/dev/null || echo "No log content available"
+        tail -n 10 logs/openbb_api.log 2>/dev/null || echo "No log content available"
     fi
 fi
 
@@ -139,6 +156,15 @@ if pgrep -f jupyter-lab > /dev/null; then
     echo -e "   Stop: ${YELLOW}jstop${NC}"
 else
     echo -e "${RED}❌ Jupyter Lab${NC}      - Not running"
+fi
+
+# Streamlit status
+if pgrep -f "streamlit run.*8501" > /dev/null; then
+    echo -e "${GREEN}✅ Streamlit App${NC}    - http://localhost:8501"
+    echo -e "   Logs: ${YELLOW}tail -f ../logs/streamlit.log${NC}"
+    echo -e "   Stop: ${YELLOW}$BASE_DIR/scripts/stop_streamlit.sh${NC}"
+else
+    echo -e "${RED}❌ Streamlit App${NC}    - Not running"
 fi
 
 # API status

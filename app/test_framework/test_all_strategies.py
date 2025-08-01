@@ -154,6 +154,10 @@ class TestCFDStrategies(unittest.TestCase):
             analytics = strategy.generate_analytics()
             self.assertIsInstance(analytics, dict)
             
+            # CRITICAL: Validate that trades were actually executed
+            total_trades = analytics.get('total_trades', 0)
+            self.assertGreater(total_trades, 0, "Strategy must execute at least 1 trade to be considered functional")
+            
             print(f"✅ V1 Baseline: Backtest execution passed (final equity: ${final_equity:,.2f})")
             print(f"   - Total trades: {analytics.get('total_trades', 0)}")
             print(f"   - Win rate: {analytics.get('win_rate', 0):.1f}%")
@@ -204,6 +208,10 @@ class TestCFDStrategies(unittest.TestCase):
             # Check advanced analytics
             analytics = strategy.generate_advanced_analytics()
             self.assertIsInstance(analytics, dict)
+            
+            # CRITICAL: Validate that trades were actually executed
+            total_trades = analytics.get('total_trades', 0)
+            self.assertGreater(total_trades, 0, "V2 Strategy must execute at least 1 trade to be considered functional")
             
             print(f"✅ V2 Performance: Optimized backtest passed (final equity: ${final_equity:,.2f})")
             print(f"   - Total trades: {analytics.get('total_trades', 0)}")
@@ -283,6 +291,10 @@ class TestCFDStrategies(unittest.TestCase):
             # Check innovative analytics
             analytics = strategy.generate_innovative_analytics()
             self.assertIsInstance(analytics, dict)
+            
+            # CRITICAL: Validate that trades were actually executed
+            total_trades = analytics.get('total_trades', 0)
+            self.assertGreater(total_trades, 0, "V3 Strategy must execute at least 1 trade to be considered functional")
             
             print(f"✅ V3 Innovation: Intelligent backtest passed (final equity: ${final_equity:,.2f})")
             print(f"   - Total trades: {analytics.get('total_trades', 0)}")

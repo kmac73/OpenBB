@@ -1,0 +1,190 @@
+
+================================================================================
+🧪 SPX CFD TESTING FRAMEWORK
+================================================================================
+Timestamp: 2025-08-01 10:02:59
+Test Directory: /mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD
+Results File: /mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/results/test_result_20250801_100259.txt
+================================================================================
+
+🚀 Starting test execution at 10:02:59
+
+Command: /home/kmm/miniconda3/envs/OpenBB-env/bin/python -m pytest -v --tb=short --strict-markers tests/ --junit-xml=pytest_results.xml
+
+============================= test session starts ==============================
+platform linux -- Python 3.12.11, pytest-8.4.1, pluggy-1.6.0 -- /home/kmm/miniconda3/envs/OpenBB-env/bin/python
+cachedir: .pytest_cache
+sensitiveurl: .*
+metadata: {'Python': '3.12.11', 'Platform': 'Linux-5.15.133.1-microsoft-standard-WSL2-x86_64-with-glibc2.39', 'Packages': {'pytest': '8.4.1', 'pluggy': '1.6.0'}, 'Plugins': {'selenium': '4.1.0', 'base-url': '2.1.0', 'anyio': '4.9.0', 'cov': '6.2.1', 'metadata': '3.1.1', 'variables': '3.1.0', 'html': '4.1.1', 'xdist': '3.8.0', 'benchmark': '5.1.0', 'freezegun': '0.4.2', 'mock': '3.14.1'}, 'Base URL': '', 'Driver': None, 'Capabilities': {}}
+benchmark: 5.1.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: /mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD
+configfile: pytest.ini
+plugins: selenium-4.1.0, base-url-2.1.0, anyio-4.9.0, cov-6.2.1, metadata-3.1.1, variables-3.1.0, html-4.1.1, xdist-3.8.0, benchmark-5.1.0, freezegun-0.4.2, mock-3.14.1
+collecting ... collected 42 items
+[10:03:37] Executing test: TestMarketDataRetrieval
+[10:03:37] TestMarketDataRetrieval: PASSED ✅
+[10:03:37] Executing test: TestMarketDataRetrieval
+[10:03:37] TestMarketDataRetrieval: PASSED ✅
+[10:03:37] Executing test: TestMarketDataRetrieval
+[10:03:37] TestMarketDataRetrieval: PASSED ✅
+[10:03:37] Executing test: TestMarketDataRetrieval
+[10:03:37] TestMarketDataRetrieval: PASSED ✅
+[10:03:37] Executing test: TestMarketDataRetrieval
+[10:03:37] TestMarketDataRetrieval: PASSED ✅
+[10:03:37] Executing test: TestMarketDataRetrieval
+[10:03:37] TestMarketDataRetrieval: PASSED ✅
+[10:03:37] Executing test: TestMarketDataRetrieval
+[10:03:37] TestMarketDataRetrieval: PASSED ✅
+[10:03:37] Executing test: TestMarketDataRetrieval
+[10:03:37] TestMarketDataRetrieval: PASSED ✅
+[10:03:37] Executing test: TestDataQuality
+[10:03:37] TestDataQuality: PASSED ✅
+[10:03:37] Executing test: TestDataQuality
+[10:03:37] TestDataQuality: PASSED ✅
+[10:03:37] Executing test: TestDataQuality
+[10:03:37] TestDataQuality: PASSED ✅
+[10:03:37] Executing test: TestDataQuality
+[10:03:37] TestDataQuality: FAILED ❌
+[10:03:37] Executing test: TestDataQuality
+[10:03:37] TestDataQuality: PASSED ✅
+[10:03:39] Executing test: TestEndToEndStrategyTests
+[10:03:39] TestEndToEndStrategyTests: PASSED ✅
+[10:03:41] Executing test: TestEndToEndStrategyTests
+[10:03:41] TestEndToEndStrategyTests: FAILED ❌
+[10:03:44] Executing test: TestEndToEndStrategyTests
+[10:03:44] TestEndToEndStrategyTests: PASSED ✅
+[10:03:52] Executing test: TestComponentIntegration
+[10:03:52] TestComponentIntegration: PASSED ✅
+[10:03:53] Executing test: TestComponentIntegration
+[10:03:53] TestComponentIntegration: PASSED ✅
+[10:03:53] Executing test: TestComponentIntegration
+[10:03:53] TestComponentIntegration: PASSED ✅
+[10:03:53] Executing test: TestParameterValidation
+[10:03:53] TestParameterValidation: PASSED ✅
+[10:03:53] Executing test: TestParameterValidation
+[10:03:53] TestParameterValidation: PASSED ✅
+[10:03:53] Executing test: TestParameterValidation
+[10:03:53] TestParameterValidation: PASSED ✅
+[10:03:53] Executing test: TestParameterValidation
+[10:03:53] TestParameterValidation: PASSED ✅
+[10:03:53] Executing test: TestParameterValidation
+[10:03:53] TestParameterValidation: PASSED ✅
+[10:03:53] Executing test: TestParameterValidation
+[10:03:53] TestParameterValidation: PASSED ✅
+[10:03:53] Executing test: TestParameterValidation
+[10:03:53] TestParameterValidation: PASSED ✅
+[10:03:53] Executing test: TestParameterValidation
+[10:03:53] TestParameterValidation: PASSED ✅
+[10:03:53] Executing test: TestParameterRelationships
+[10:03:53] TestParameterRelationships: PASSED ✅
+[10:03:53] Executing test: TestParameterRelationships
+[10:03:53] TestParameterRelationships: PASSED ✅
+[10:03:53] Executing test: TestParameterRelationships
+[10:03:53] TestParameterRelationships: PASSED ✅
+[10:03:53] Executing test: TestParameterRelationships
+[10:03:53] TestParameterRelationships: FAILED ❌
+[10:03:53] Executing test: TestDateSelectionAndInput
+[10:03:53] TestDateSelectionAndInput: FAILED ❌
+[10:03:53] Executing test: TestDateSelectionAndInput
+[10:03:53] TestDateSelectionAndInput: PASSED ✅
+[10:03:53] Executing test: TestDateSelectionAndInput
+[10:03:53] TestDateSelectionAndInput: PASSED ✅
+[10:03:53] Executing test: TestParameterFileManagement
+[10:03:53] TestParameterFileManagement: PASSED ✅
+[10:03:54] Executing test: TestParameterFileManagement
+[10:03:54] TestParameterFileManagement: PASSED ✅
+[10:03:54] Executing test: TestChartGenerationAndVisualization
+[10:03:54] TestChartGenerationAndVisualization: PASSED ✅
+[10:03:54] Executing test: TestChartGenerationAndVisualization
+[10:03:54] TestChartGenerationAndVisualization: PASSED ✅
+[10:03:54] Executing test: TestPDFReportGeneration
+[10:03:54] TestPDFReportGeneration: PASSED ✅
+[10:03:55] Executing test: TestPDFReportGeneration
+[10:03:55] TestPDFReportGeneration: PASSED ✅
+[10:03:55] Executing test: TestUserExperienceAndInteraction
+[10:03:55] TestUserExperienceAndInteraction: PASSED ✅
+[10:03:57] Executing test: TestUserExperienceAndInteraction
+[10:03:57] TestUserExperienceAndInteraction: PASSED ✅
+=================================== FAILURES ===================================
+__________________ TestDataQuality.test_data_price_precision ___________________
+tests/test_data_management.py:342: in test_data_price_precision
+    assert decimal_places <= 4, f"Too many decimal places in {col}: {price_str}"
+E   AssertionError: Too many decimal places in Open: 4499.5157208224855
+E   assert 13 <= 4
+----------------------------- Captured stdout call -----------------------------
+[10:03:37] Executing test: test_data_price_precision
+[10:03:37] test_data_price_precision: FAIL - Too many decimal places in Open: 4499.5157208224855
+assert 13 <= 4
+______________ TestEndToEndStrategyTests.test_multi_day_backtest _______________
+tests/test_integration.py:144: in test_multi_day_backtest
+    assert entry_date == exit_date, f"Trade should not span multiple days: {entry_date} to {exit_date}"
+E   AssertionError: Trade should not span multiple days: 2023-01-04 to 2023-01-05
+E   assert datetime.date(2023, 1, 4) == datetime.date(2023, 1, 5)
+----------------------------- Captured stdout call -----------------------------
+[10:03:39] Executing test: test_multi_day_backtest
+[10:03:41] test_multi_day_backtest: FAIL - Trade should not span multiple days: 2023-01-04 to 2023-01-05
+assert datetime.date(2023, 1, 4) == datetime.date(2023, 1, 5)
+_____________ TestParameterRelationships.test_leverage_constraints _____________
+tests/test_strategy_parameters.py:381: in test_leverage_constraints
+    assert abs(margin_utilization - 0.5) < 0.01, "2:1 leverage should use 50% margin"
+E   AssertionError: 2:1 leverage should use 50% margin
+E   assert 0.5 < 0.01
+E    +  where 0.5 = abs((1.0 - 0.5))
+----------------------------- Captured stdout call -----------------------------
+[10:03:53] Executing test: test_leverage_constraints
+[10:03:53] test_leverage_constraints: FAIL - 2:1 leverage should use 50% margin
+assert 0.5 < 0.01
+ +  where 0.5 = abs((1.0 - 0.5))
+____________ TestDateSelectionAndInput.test_date_input_manual_entry ____________
+tests/test_ui_components.py:54: in test_date_input_manual_entry
+    with pytest.raises((ValueError, TypeError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE any of (<class 'ValueError'>, <class 'TypeError'>)
+----------------------------- Captured stdout call -----------------------------
+[10:03:53] Executing test: test_date_input_manual_entry
+=============================== warnings summary ===============================
+../../../../../../../../home/kmm/miniconda3/envs/OpenBB-env/lib/python3.12/site-packages/openbb_core/provider/utils/client.py:65
+  /home/kmm/miniconda3/envs/OpenBB-env/lib/python3.12/site-packages/openbb_core/provider/utils/client.py:65: DeprecationWarning: Inheritance class ClientSession from ClientSession is discouraged
+    class ClientSession(aiohttp.ClientSession):
+../../../../../../../../home/kmm/miniconda3/envs/OpenBB-env/lib/python3.12/site-packages/pydantic/fields.py:1093
+  /home/kmm/miniconda3/envs/OpenBB-env/lib/python3.12/site-packages/pydantic/fields.py:1093: PydanticDeprecatedSince20: Using extra keyword arguments on `Field` is deprecated and will be removed. Use `json_schema_extra` instead. (Extra keys: 'gte'). Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/
+    warn(
+tests/test_data_management.py::TestMarketDataRetrieval::test_data_frequency_mapping
+  /mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/conftest.py:137: FutureWarning: 'T' is deprecated and will be removed in a future version, please use 'min' instead.
+    dates = pd.date_range(start_date, end_date, freq='5T')
+tests/test_data_management.py: 6 warnings
+tests/test_integration.py: 4 warnings
+tests/test_ui_components.py: 2 warnings
+  /mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/conftest.py:76: FutureWarning: 'T' is deprecated and will be removed in a future version, please use 'min' instead.
+    times = pd.date_range('09:30', '16:00', freq='5T').time
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/pytest_results.xml -
+=========================== short test summary info ============================
+[10:03:58] Executing test: TestDataQuality
+[10:03:58] TestDataQuality: FAILED ❌
+[10:03:58] Executing test: TestEndToEndStrategyTests
+[10:03:58] TestEndToEndStrategyTests: FAILED ❌
+[10:03:58] Executing test: TestParameterRelationships
+[10:03:58] TestParameterRelationships: FAILED ❌
+[10:03:58] Executing test: TestDateSelectionAndInput
+[10:03:58] TestDateSelectionAndInput: FAILED ❌
+================== 4 failed, 38 passed, 15 warnings in 41.80s ==================
+
+================================================================================
+📊 TEST EXECUTION SUMMARY
+================================================================================
+Start Time: 2025-08-01 10:02:59
+End Time: 2025-08-01 10:03:59
+Duration: 0:01:00.593117
+
+Total Tests: 46
+✅ Passed: 38
+❌ Failed: 8
+⏭️  Skipped: 0
+
+Success Rate: 82.6%
+💥 OVERALL RESULT: SOME TESTS FAILED
+
+📁 Detailed results saved to: /mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/results/test_result_20250801_100259.txt
+📄 JSON results saved to: /mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/results/test_result_20250801_100259.json
+================================================================================

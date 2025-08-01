@@ -76,6 +76,11 @@ def test_parameter(param_name, test_values, test_data):
             final_equity = strategy.run_backtest(test_data)
             analytics = strategy.generate_analytics()
             
+            # CRITICAL: Validate that trades were actually executed
+            total_trades = analytics['total_trades']
+            if total_trades == 0:
+                raise ValueError(f"Strategy with {param_name}={value} executed 0 trades - strategy is not functional")
+            
             result = {
                 'value': value,
                 'final_equity': final_equity,
@@ -228,6 +233,11 @@ def test_edge_cases():
             strategy = CFDStrategyV1(test_params)
             final_equity = strategy.run_backtest(test_data)
             analytics = strategy.generate_analytics()
+            
+            # CRITICAL: Validate that trades were actually executed
+            total_trades = analytics['total_trades']
+            if total_trades == 0:
+                raise ValueError(f"Edge case '{description}' executed 0 trades - strategy is not functional")
             
             print(f"  ✅ Edge case {i+1}: {description}")
             print(f"      Result: ${final_equity:.2f}, "

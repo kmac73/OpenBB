@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="10" failures="0" skipped="0" tests="10" time="1.269" timestamp="2025-08-01T11:26:07.899817-04:00" hostname="kmac"><testcase classname="" name="tests.test_data_management" time="0.000"><error message="collection failure">tests/test_data_management.py:16: in &lt;module&gt;
+    from spx_v1_strategy import SPX_V1Strategy
+E   ModuleNotFoundError: No module named 'spx_v1_strategy'
+
+During handling of the above exception, another exception occurred:
+tests/test_data_management.py:20: in &lt;module&gt;
+    print(f"Warning: Could not import {self.framework_name} strategy components")
+                                       ^^^^
+E   NameError: name 'self' is not defined</error></testcase><testcase classname="" name="tests.test_edge_cases" time="0.000"><error message="collection failure">tests/test_edge_cases.py:16: in &lt;module&gt;
+    from spx_v1_strategy import SPX_V1Strategy
+E   ModuleNotFoundError: No module named 'spx_v1_strategy'
+
+During handling of the above exception, another exception occurred:
+tests/test_edge_cases.py:20: in &lt;module&gt;
+    print(f"Warning: Could not import {self.framework_name} strategy components")
+                                       ^^^^
+E   NameError: name 'self' is not defined</error></testcase><testcase classname="" name="tests.test_integration" time="0.000"><error message="collection failure">tests/test_integration.py:16: in &lt;module&gt;
+    from spx_v1_strategy import SPX_V1Strategy
+E   ModuleNotFoundError: No module named 'spx_v1_strategy'
+
+During handling of the above exception, another exception occurred:
+tests/test_integration.py:20: in &lt;module&gt;
+    print(f"Warning: Could not import {self.framework_name} strategy components")
+                                       ^^^^
+E   NameError: name 'self' is not defined</error></testcase><testcase classname="" name="tests.test_performance" time="0.000"><error message="collection failure">tests/test_performance.py:16: in &lt;module&gt;
+    from spx_v1_strategy import SPX_V1Strategy
+E   ModuleNotFoundError: No module named 'spx_v1_strategy'
+
+During handling of the above exception, another exception occurred:
+tests/test_performance.py:20: in &lt;module&gt;
+    print(f"Warning: Could not import {self.framework_name} strategy components")
+                                       ^^^^
+E   NameError: name 'self' is not defined</error></testcase><testcase classname="" name="tests.test_performance_analytics" time="0.000"><error message="collection failure">tests/test_performance_analytics.py:16: in &lt;module&gt;
+    from spx_v1_strategy import SPX_V1Strategy
+E   ModuleNotFoundError: No module named 'spx_v1_strategy'
+
+During handling of the above exception, another exception occurred:
+tests/test_performance_analytics.py:20: in &lt;module&gt;
+    print(f"Warning: Could not import {self.framework_name} strategy components")
+                                       ^^^^
+E   NameError: name 'self' is not defined</error></testcase><testcase classname="" name="tests.test_regulatory_compliance" time="0.000"><error message="collection failure">tests/test_regulatory_compliance.py:16: in &lt;module&gt;
+    from spx_v1_strategy import SPX_V1Strategy
+E   ModuleNotFoundError: No module named 'spx_v1_strategy'
+
+During handling of the above exception, another exception occurred:
+tests/test_regulatory_compliance.py:20: in &lt;module&gt;
+    print(f"Warning: Could not import {self.framework_name} strategy components")
+                                       ^^^^
+E   NameError: name 'self' is not defined</error></testcase><testcase classname="" name="tests.test_strategy_parameters" time="0.000"><error message="collection failure">tests/test_strategy_parameters.py:16: in &lt;module&gt;
+    from spx_v1_strategy import SPX_V1Strategy
+E   ModuleNotFoundError: No module named 'spx_v1_strategy'
+
+During handling of the above exception, another exception occurred:
+tests/test_strategy_parameters.py:20: in &lt;module&gt;
+    print(f"Warning: Could not import {self.framework_name} strategy components")
+                                       ^^^^
+E   NameError: name 'self' is not defined</error></testcase><testcase classname="" name="tests.test_trading_logic" time="0.000"><error message="collection failure">tests/test_trading_logic.py:16: in &lt;module&gt;
+    from spx_v1_strategy import SPX_V1Strategy
+E   ModuleNotFoundError: No module named 'spx_v1_strategy'
+
+During handling of the above exception, another exception occurred:
+tests/test_trading_logic.py:20: in &lt;module&gt;
+    print(f"Warning: Could not import {self.framework_name} strategy components")
+                                       ^^^^
+E   NameError: name 'self' is not defined</error></testcase><testcase classname="" name="tests.test_transaction_costs" time="0.000"><error message="collection failure">tests/test_transaction_costs.py:16: in &lt;module&gt;
+    from spx_v1_strategy import SPX_V1Strategy
+E   ModuleNotFoundError: No module named 'spx_v1_strategy'
+
+During handling of the above exception, another exception occurred:
+tests/test_transaction_costs.py:20: in &lt;module&gt;
+    print(f"Warning: Could not import {self.framework_name} strategy components")
+                                       ^^^^
+E   NameError: name 'self' is not defined</error></testcase><testcase classname="" name="tests.test_ui_components" time="0.000"><error message="collection failure">tests/test_ui_components.py:16: in &lt;module&gt;
+    from spx_v1_strategy import SPX_V1Strategy
+E   ModuleNotFoundError: No module named 'spx_v1_strategy'
+
+During handling of the above exception, another exception occurred:
+tests/test_ui_components.py:20: in &lt;module&gt;
+    print(f"Warning: Could not import {self.framework_name} strategy components")
+                                       ^^^^
+E   NameError: name 'self' is not defined</error></testcase></testsuite></testsuites>

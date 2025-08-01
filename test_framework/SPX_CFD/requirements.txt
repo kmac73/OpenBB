@@ -1,0 +1,80 @@
+# SPX CFD Testing Framework Requirements
+
+# Core testing framework
+pytest>=7.0.0
+pytest-cov>=4.0.0
+pytest-html>=3.1.0
+pytest-mock>=3.10.0
+pytest-xdist>=3.0.0
+
+# Data handling and analysis
+pandas>=1.5.0
+numpy>=1.24.0
+scipy>=1.10.0
+
+# Mocking and testing utilities
+unittest-xml-reporting>=3.2.0
+freezegun>=1.2.0
+responses>=0.20.0
+
+# UI testing (Streamlit)
+streamlit>=1.28.0
+selenium>=4.15.0
+pytest-selenium>=4.0.0
+
+# Chart testing (Plotly)
+plotly>=5.15.0
+kaleido>=0.2.1
+
+# PDF testing
+reportlab>=4.0.0
+PyPDF2>=3.0.0
+
+# Performance testing
+memory-profiler>=0.60.0
+psutil>=5.9.0
+pytest-benchmark>=4.0.0
+
+# Code quality
+flake8>=6.0.0
+black>=23.0.0
+isort>=5.12.0
+mypy>=1.5.0
+
+# Coverage reporting
+coverage>=7.0.0
+coverage-badge>=1.1.0
+
+# OpenBB dependencies (if available)
+openbb>=4.0.0
+
+# Market data dependencies
+yfinance>=0.2.0
+requests>=2.28.0
+
+# Utilities
+python-dateutil>=2.8.0
+pytz>=2023.3
+colorama>=0.4.6
+tabulate>=0.9.0
+
+# Development utilities
+ipython>=8.0.0
+jupyter>=1.0.0
+matplotlib>=3.6.0
+
+# Optional: Database testing
+sqlite3  # Built-in
+sqlalchemy>=2.0.0
+
+# Optional: Network testing
+httpx>=0.24.0
+aioresponses>=0.7.0
+
+# Configuration
+pydantic>=2.0.0
+python-dotenv>=1.0.0
+
+# Logging and monitoring
+structlog>=23.0.0
+rich>=13.0.0

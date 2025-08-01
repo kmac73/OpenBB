@@ -1,0 +1,49 @@
+============================================================
+SP500 CFD STRATEGY V1 - DEBUG PARAMETERS
+============================================================
+Generated: 2025-07-31 20:07:27
+Strategy: V1 - Baseline
+============================================================
+
+ACCOUNT SETTINGS:
+--------------------
+Initial Capital: $25,000
+Risk Per Trade: 1.0%
+Max Concurrent Positions: 1
+
+TRADING RULES:
+--------------------
+Opening Range Minutes: 30
+Entry Threshold Points: 2.0
+Stop Loss Points: 4.0
+Profit Target Points: 8.0
+Risk-Reward Ratio: 2.0:1
+
+DIRECTIONAL BIAS:
+--------------------
+Short Bias Multiplier: 1.5x
+
+TRANSACTION COSTS:
+--------------------
+Spread Points: 1.0
+Commission Per Trade: $1.0
+
+DATA SETTINGS:
+--------------------
+Symbol: SPX
+Start Date: 2024-01-01
+End Date: 2024-03-29
+Frequency: 5M
+
+CALCULATED VALUES:
+--------------------
+Sample Position Size: 62 CFDs
+Sample Risk Amount: $250.00
+Sample Transaction Cost: $63.00
+Cost as % of Risk: 25.2%
+
+SYSTEM INFO:
+--------------------
+Working Directory: /mnt/c/Users/kevin/git/OpenBB/app/SP500_CFD_v1
+Parameter File: debug_params_v1_20250731_200727.txt
+Python Version: 3.12.11

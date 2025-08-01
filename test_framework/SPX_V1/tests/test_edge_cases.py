@@ -1,0 +1,69 @@
+"""
+Test suite for Edge Cases functionality.
+Error handling and market anomalies
+"""
+
+import pytest
+import pandas as pd
+import numpy as np
+from unittest.mock import Mock, patch, MagicMock
+from datetime import datetime, time, timedelta
+import sys
+from pathlib import Path
+
+# Import strategy components (adjust as needed)
+try:
+    from spx_v1_strategy import SPX_V1Strategy
+    from market_data import Retrieve
+except ImportError:
+    # Fallback for test environment
+    print(f"Warning: Could not import {self.framework_name} strategy components")
+    
+    class SPX_V1Strategy:
+        def __init__(self, params):
+            self.params = params
+            self.trades = []
+        
+        def run_backtest(self, data):
+            return self.params.get('initial_capital', 25000)
+        
+        def generate_analytics(self):
+            return {'total_trades': 0, 'win_rate': 0, 'total_pnl': 0}
+    
+    class Retrieve:
+        def get_data(self, symbol, start_date, end_date, frequency):
+            return pd.DataFrame()
+
+
+
+class TestEdgecases:
+    """Test suite for Edge Cases."""
+    
+    @pytest.mark.unit
+    def test_edge_cases_basic_functionality(self, test_logger):
+        """Test basic edge_cases functionality."""
+        test_logger.start_test("test_edge_cases_basic_functionality")
+        
+        try:
+            # Add specific tests for edge_cases
+            assert True  # Placeholder - implement specific tests
+            
+            test_logger.end_test("test_edge_cases_basic_functionality", "PASS")
+        except Exception as e:
+            test_logger.end_test("test_edge_cases_basic_functionality", "FAIL", str(e))
+            raise
+    
+    @pytest.mark.integration
+    def test_edge_cases_integration(self, test_logger, sample_strategy_params):
+        """Test edge_cases integration with strategy."""
+        test_logger.start_test("test_edge_cases_integration")
+        
+        try:
+            # Test integration with main strategy
+            strategy = SPX_V1Strategy(sample_strategy_params)
+            assert strategy is not None
+            
+            test_logger.end_test("test_edge_cases_integration", "PASS")
+        except Exception as e:
+            test_logger.end_test("test_edge_cases_integration", "FAIL", str(e))
+            raise

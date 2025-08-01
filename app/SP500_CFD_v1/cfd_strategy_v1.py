@@ -25,6 +25,28 @@ st.set_page_config(
 st.title("📈 SP500 CFD Strategy - Version 1 (Baseline)")
 st.markdown("### Basic Implementation with Standard Analytics")
 
+# Parameter Description Table
+st.subheader("📋 Parameter Descriptions")
+parameter_descriptions = {
+    "Initial Capital": "Starting account balance for backtesting ($10K-$1M)",
+    "Risk Per Trade": "Maximum percentage of capital to risk on each trade (0.5-3.0%)",
+    "Max Concurrent Positions": "Maximum number of open positions (always 1 for this strategy)",
+    "Opening Range Minutes": "Time period to establish opening range from 9:30 AM (15-60 min)",
+    "Entry Threshold Points": "Minimum breakout distance from opening range to trigger entry (1.0-3.0 pts)",
+    "Stop Loss Points": "Fixed stop loss distance from entry price (3.0-6.0 pts)",
+    "Profit Target Points": "Fixed profit target distance from entry price (6.0-12.0 pts)",
+    "Short Bias Multiplier": "Multiplier applied to short position sizes (1.0-2.0x)",
+    "Spread Points": "Bid-ask spread cost per CFD (0.4-1.5 pts)",
+    "Commission Per Trade": "Fixed commission charged per trade entry/exit ($0.5-$2.0)",
+    "Frequency": "Data timeframe for analysis (1M, 5M, 30M, 1H, 1D)",
+    "Symbol": "Trading symbol (SPX for S&P 500 index)",
+    "Start Date": "Backtest start date (YYYY-MM-DD format)",
+    "End Date": "Backtest end date (YYYY-MM-DD format)"
+}
+
+df_params = pd.DataFrame(list(parameter_descriptions.items()), columns=['Parameter', 'Description'])
+st.table(df_params)
+
 class CFDStrategyV1:
     def __init__(self, params):
         self.params = params
@@ -49,8 +71,9 @@ class CFDStrategyV1:
         opening_minutes = self.params['opening_range_minutes']
         start_time = time(9, 30)
         
-        # Calculate end time properly handling hour overflow
-        total_minutes = 30 + opening_minutes
+        # Calculate end time properly handling hour overflow  
+        # Start at 9:30 (30 minutes), add opening_minutes to get end time
+        total_minutes = 30 + opening_minutes  
         end_hour = 9 + (total_minutes // 60)
         end_minute = total_minutes % 60
         end_time = time(end_hour, end_minute)
@@ -102,8 +125,8 @@ class CFDStrategyV1:
     def run_backtest(self, data):
         """Execute the CFD strategy backtest"""
         account_equity = self.params['initial_capital']
-        max_positions = self.params['max_concurrent_positions']
-        active_positions = []
+        # Force single position strategy - ignore max_concurrent_positions parameter
+        active_position = None  # Only one position allowed
         
         # Trading hours: 9:45 AM - 3:30 PM EST
         start_trading = time(9, 45)
@@ -124,8 +147,8 @@ class CFDStrategyV1:
             if opening_high is None:
                 continue
                 
-            # Check for entry signals
-            if len(active_positions) < max_positions:
+            # Check for entry signals - only if no active position
+            if active_position is None:
                 entry_threshold = self.params['entry_threshold_points']
                 
                 # LONG entry: price breaks above opening range high
@@ -143,7 +166,7 @@ class CFDStrategyV1:
                         
                         transaction_cost = self.calculate_transaction_costs(position_size)
                         
-                        position = {
+                        active_position = {
                             'entry_time': current_date,
                             'entry_price': current_price,
                             'direction': 'LONG',
@@ -152,7 +175,6 @@ class CFDStrategyV1:
                             'profit_target': current_price + self.params['profit_target_points'],
                             'transaction_cost': transaction_cost
                         }
-                        active_positions.append(position)
                 
                 # SHORT entry: price breaks below opening range low
                 elif current_price < opening_low - entry_threshold:
@@ -169,7 +191,7 @@ class CFDStrategyV1:
                         
                         transaction_cost = self.calculate_transaction_costs(position_size)
                         
-                        position = {
+                        active_position = {
                             'entry_time': current_date,
                             'entry_price': current_price,
                             'direction': 'SHORT',
@@ -178,28 +200,26 @@ class CFDStrategyV1:
                             'profit_target': current_price - self.params['profit_target_points'],
                             'transaction_cost': transaction_cost
                         }
-                        active_positions.append(position)
             
-            # Check for exits on active positions
-            positions_to_remove = []
-            for pos_idx, position in enumerate(active_positions):
+            # Check for exit on active position
+            if active_position is not None:
                 exit_triggered = False
                 exit_reason = ""
                 exit_price = current_price
                 
                 # Check stop loss and profit target
-                if position['direction'] == 'LONG':
-                    if current_price <= position['stop_loss']:
+                if active_position['direction'] == 'LONG':
+                    if current_price <= active_position['stop_loss']:
                         exit_triggered = True
                         exit_reason = "Stop Loss"
-                    elif current_price >= position['profit_target']:
+                    elif current_price >= active_position['profit_target']:
                         exit_triggered = True
                         exit_reason = "Profit Target"
-                elif position['direction'] == 'SHORT':
-                    if current_price >= position['stop_loss']:
+                elif active_position['direction'] == 'SHORT':
+                    if current_price >= active_position['stop_loss']:
                         exit_triggered = True
                         exit_reason = "Stop Loss"
-                    elif current_price <= position['profit_target']:
+                    elif current_price <= active_position['profit_target']:
                         exit_triggered = True
                         exit_reason = "Profit Target"
                 
@@ -210,34 +230,35 @@ class CFDStrategyV1:
                 
                 if exit_triggered:
                     # Calculate P&L
-                    if position['direction'] == 'LONG':
-                        gross_pnl = (exit_price - position['entry_price']) * position['size']
+                    if active_position['direction'] == 'LONG':
+                        gross_pnl = (exit_price - active_position['entry_price']) * active_position['size']
                     else:
-                        gross_pnl = (position['entry_price'] - exit_price) * position['size']
+                        gross_pnl = (active_position['entry_price'] - exit_price) * active_position['size']
                     
-                    net_pnl = gross_pnl - position['transaction_cost']
+                    net_pnl = gross_pnl - active_position['transaction_cost']
+                    
+                    # Calculate trade duration in minutes
+                    duration_timedelta = current_date - active_position['entry_time']
+                    duration_minutes = duration_timedelta.total_seconds() / 60
                     
                     trade = {
-                        'entry_time': position['entry_time'],
+                        'entry_time': active_position['entry_time'],
                         'exit_time': current_date,
-                        'direction': position['direction'],
-                        'entry_price': position['entry_price'],
+                        'direction': active_position['direction'],
+                        'entry_price': active_position['entry_price'],
                         'exit_price': exit_price,
-                        'size': position['size'],
+                        'size': active_position['size'],
                         'gross_pnl': gross_pnl,
-                        'transaction_cost': position['transaction_cost'],
+                        'transaction_cost': active_position['transaction_cost'],
                         'net_pnl': net_pnl,
                         'exit_reason': exit_reason,
-                        'duration': current_date - position['entry_time']
+                        'duration': duration_timedelta,
+                        'duration_minutes': duration_minutes
                     }
                     
                     self.trades.append(trade)
                     account_equity += net_pnl
-                    positions_to_remove.append(pos_idx)
-            
-            # Remove closed positions
-            for idx in reversed(positions_to_remove):
-                active_positions.pop(idx)
+                    active_position = None  # Clear the position
         
         return account_equity
     
@@ -258,7 +279,10 @@ class CFDStrategyV1:
                 'total_return': 0,
                 'final_equity': self.params['initial_capital'],
                 'profit_factor': 0,
-                'cost_ratio': 0
+                'cost_ratio': 0,
+                'shortest_trade_minutes': 0,
+                'longest_trade_minutes': 0,
+                'avg_trade_duration_minutes': 0
             }
             
         trades_df = pd.DataFrame(self.trades)
@@ -275,6 +299,12 @@ class CFDStrategyV1:
         
         avg_win = trades_df[trades_df['net_pnl'] > 0]['net_pnl'].mean() if winning_trades > 0 else 0
         avg_loss = trades_df[trades_df['net_pnl'] <= 0]['net_pnl'].mean() if losing_trades > 0 else 0
+        
+        # Trade duration metrics
+        duration_minutes = trades_df['duration_minutes'] if 'duration_minutes' in trades_df.columns else [0]
+        shortest_trade = duration_minutes.min() if len(duration_minutes) > 0 else 0
+        longest_trade = duration_minutes.max() if len(duration_minutes) > 0 else 0
+        avg_trade_duration = duration_minutes.mean() if len(duration_minutes) > 0 else 0
         
         # Risk metrics
         trades_df['cumulative_pnl'] = trades_df['net_pnl'].cumsum()
@@ -301,7 +331,10 @@ class CFDStrategyV1:
             'total_return': total_return,
             'final_equity': final_equity,
             'profit_factor': abs(avg_win * winning_trades / (avg_loss * losing_trades)) if losing_trades > 0 and avg_loss != 0 else 0,
-            'cost_ratio': (total_costs / abs(gross_pnl)) * 100 if gross_pnl != 0 else 0
+            'cost_ratio': (total_costs / abs(gross_pnl)) * 100 if gross_pnl != 0 else 0,
+            'shortest_trade_minutes': shortest_trade,
+            'longest_trade_minutes': longest_trade,
+            'avg_trade_duration_minutes': avg_trade_duration
         }
 
 # Sidebar Parameters
@@ -311,7 +344,7 @@ st.sidebar.header("📋 Strategy Parameters")
 st.sidebar.subheader("💰 Account Settings")
 initial_capital = st.sidebar.selectbox("Initial Capital", [10000, 25000, 50000], index=1)
 risk_per_trade = st.sidebar.slider("Risk Per Trade (%)", 0.5, 2.0, 1.0, 0.1)
-max_concurrent_positions = st.sidebar.selectbox("Max Concurrent Positions", [1, 2, 3], index=0)
+max_concurrent_positions = st.sidebar.selectbox("Max Concurrent Positions", [1], index=0, help="This strategy only supports 1 position at a time")
 
 # Trading Parameters
 st.sidebar.subheader("📈 Trading Rules")
@@ -539,6 +572,16 @@ if run_strategy:
                 with col4:
                     st.metric("Max Drawdown", f"${analytics['max_drawdown']:.2f}")
                 
+                # Trade Duration Metrics
+                st.subheader("⏱️ Trade Duration Analysis")
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.metric("Shortest Trade", f"{analytics['shortest_trade_minutes']:.0f} min")
+                with col2:
+                    st.metric("Longest Trade", f"{analytics['longest_trade_minutes']:.0f} min")
+                with col3:
+                    st.metric("Average Trade", f"{analytics['avg_trade_duration_minutes']:.0f} min")
+                
                 # Performance Summary
                 st.subheader("📊 Performance Summary")
                 col1, col2 = st.columns(2)
@@ -586,7 +629,10 @@ if run_strategy:
                     # Recent Trades Table
                     st.subheader("📋 Recent Trades")
                     recent_trades = trades_df.tail(10)
-                    st.dataframe(recent_trades[['entry_time', 'direction', 'entry_price', 'exit_price', 'net_pnl', 'exit_reason']])
+                    display_trades = recent_trades[['entry_time', 'direction', 'entry_price', 'exit_price', 'net_pnl', 'duration_minutes', 'exit_reason']].copy()
+                    display_trades['duration_minutes'] = display_trades['duration_minutes'].round(0).astype(int)
+                    display_trades.columns = ['Entry Time', 'Direction', 'Entry Price', 'Exit Price', 'Net P&L', 'Duration (min)', 'Exit Reason']
+                    st.dataframe(display_trades)
                 
             else:
                 st.error("❌ Failed to load market data. Please check your date range and symbol.")

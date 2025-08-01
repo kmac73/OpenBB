@@ -10,10 +10,21 @@ class Retrieve:
     """A class to retrieve financial market data."""
 
     @staticmethod
-    def from_provider(symbols: list, start_date: str, end_date: str) -> pd.DataFrame:
+    def from_provider(symbols: list, start_date: str, end_date: str, frequency: str = "1D") -> pd.DataFrame:
         """Fetches historical price data for a list of symbols from a provider."""
         dataframes = []
-        print("📊 Fetching historical data from provider...")
+        print(f"📊 Fetching {frequency} historical data from provider...")
+
+        # Map frequency to yfinance interval
+        interval_map = {
+            "1M": "1m",
+            "5M": "5m", 
+            "30M": "30m",
+            "1H": "1h",
+            "1D": "1d"
+        }
+        
+        yf_interval = interval_map.get(frequency, "1d")
 
         for symbol in symbols:
             try:
@@ -22,16 +33,34 @@ class Retrieve:
                     symbol=f"^{symbol}",
                     start_date=start_date,
                     end_date=end_date,
+                    interval=yf_interval,
                     provider="yfinance"
                 ).to_df()
 
                 data = data.reset_index()
                 data['Symbol'] = symbol
                 dataframes.append(data)
-                print(f"✓ Fetched {len(data)} records for {symbol}")
+                print(f"✓ Fetched {len(data)} {frequency} records for {symbol}")
 
             except Exception as e:
-                print(f"❌ Failed to fetch data for {symbol}: {e}")
+                print(f"❌ Failed to fetch {frequency} data for {symbol}: {e}")
+                # Try without interval parameter as fallback
+                try:
+                    print(f"🔄 Retrying {symbol} without interval parameter...")
+                    data = obb.equity.price.historical(
+                        symbol=f"^{symbol}",
+                        start_date=start_date,
+                        end_date=end_date,
+                        provider="yfinance"
+                    ).to_df()
+                    
+                    data = data.reset_index()
+                    data['Symbol'] = symbol
+                    dataframes.append(data)
+                    print(f"✓ Fetched {len(data)} daily records for {symbol} (fallback)")
+                    
+                except Exception as e2:
+                    print(f"❌ Both attempts failed for {symbol}: {e2}")
 
         # If the list is empty, return an empty DataFrame, NOT None
         if not dataframes:
@@ -56,7 +85,7 @@ class Retrieve:
         end_dt = pd.to_datetime(end_date)
 
         for symbol in symbols:
-            filepath = Path(f"../market_data/historical/{symbol}/{freq}.txt")
+            filepath = Path(f"../../market_data/historical/{symbol}/{freq}.txt")
             try:
                 headers = ['date', 'open', 'high', 'low', 'close']
                 raw_text = filepath.read_text()
@@ -91,13 +120,46 @@ class Retrieve:
     
     def get_data(self, symbol: str, start_date: str, end_date: str, frequency: str = "1D") -> pd.DataFrame:
         """
-        Main method to retrieve market data - tries provider first, falls back to files
+        Main method to retrieve market data - prioritizes files for intraday data
         Expected by CFD strategy implementations
         """
+        # For intraday frequencies, try files first (where the good data is)
+        if frequency in ["1M", "5M", "30M", "1H"]:
+            try:
+                # Try file data first for intraday frequencies
+                print(f"🔄 Attempting to load {symbol} {frequency} data from files...")
+                data = self.from_file([symbol], start_date, end_date, frequency)
+                
+                if not data.empty:
+                    # Convert to expected format
+                    data = data.rename(columns={
+                        'date': 'Date',
+                        'open': 'Open',
+                        'high': 'High', 
+                        'low': 'Low',
+                        'close': 'Close'
+                    })
+                    
+                    # Add volume if missing
+                    if 'Volume' not in data.columns:
+                        data['Volume'] = 1000000  # Default volume
+                    
+                    # Set date as index
+                    if 'Date' in data.columns:
+                        data['Date'] = pd.to_datetime(data['Date'])
+                        data.set_index('Date', inplace=True)
+                    
+                    required_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
+                    print(f"✅ Successfully loaded {len(data)} records from files")
+                    return data[required_cols]
+                    
+            except Exception as e:
+                print(f"⚠️  File loading failed: {e}")
+        
+        # For daily data or if files failed, try provider
         try:
-            # Try provider first (for real-time data)
-            print(f"🔄 Attempting to fetch {symbol} data from provider...")
-            data = self.from_provider([symbol], start_date, end_date)
+            print(f"🔄 Attempting to fetch {symbol} {frequency} data from provider...")
+            data = self.from_provider([symbol], start_date, end_date, frequency)
             
             if not data.empty:
                 # Convert to expected format for CFD strategies
@@ -130,100 +192,7 @@ class Retrieve:
         except Exception as e:
             print(f"⚠️  Provider fetch failed: {e}")
         
-        try:
-            # Fallback to file data
-            print(f"🔄 Attempting to load {symbol} data from files...")
-            data = self.from_file([symbol], start_date, end_date, frequency)
-            
-            if not data.empty:
-                # Convert to expected format
-                data = data.rename(columns={
-                    'date': 'Date',
-                    'open': 'Open',
-                    'high': 'High', 
-                    'low': 'Low',
-                    'close': 'Close'
-                })
-                
-                # Add volume if missing
-                if 'Volume' not in data.columns:
-                    data['Volume'] = 1000000  # Default volume
-                
-                # Set date as index
-                if 'Date' in data.columns:
-                    data['Date'] = pd.to_datetime(data['Date'])
-                    data.set_index('Date', inplace=True)
-                
-                required_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
-                print(f"✅ Successfully loaded {len(data)} records from files")
-                return data[required_cols]
-                
-        except Exception as e:
-            print(f"⚠️  File loading failed: {e}")
-        
-        # If all methods fail, generate synthetic data for testing
-        print(f"⚠️  All data sources failed. Generating synthetic data for testing...")
-        return self._generate_synthetic_data(symbol, start_date, end_date, frequency)
-    
-    def _generate_synthetic_data(self, symbol: str, start_date: str, end_date: str, frequency: str = "5M") -> pd.DataFrame:
-        """Generate synthetic market data for testing purposes"""
-        import numpy as np
-        
-        start_dt = pd.to_datetime(start_date)
-        end_dt = pd.to_datetime(end_date)
-        
-        # Generate time series based on frequency
-        if frequency == "5M":
-            # Generate 5-minute intervals during trading hours only
-            dates = []
-            current_date = start_dt
-            
-            while current_date <= end_dt:
-                # Only weekdays
-                if current_date.weekday() < 5:
-                    # Trading hours: 9:30 AM - 4:00 PM
-                    for hour in range(9, 16):
-                        for minute in [30, 35, 40, 45, 50, 55] if hour == 9 else [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]:
-                            if hour == 15 and minute > 0:  # Stop at 4:00 PM
-                                break
-                            dt = current_date.replace(hour=hour, minute=minute, second=0, microsecond=0)
-                            dates.append(dt)
-                current_date += pd.Timedelta(days=1)
-        else:
-            # Daily data
-            dates = pd.date_range(start=start_dt, end=end_dt, freq='D')
-            # Filter to weekdays only
-            dates = dates[dates.weekday < 5]
-        
-        # Limit data size for performance
-        if len(dates) > 2000:
-            dates = dates[:2000]
-        
-        # Generate realistic price data
-        np.random.seed(42)  # Reproducible for testing
-        base_price = 4500.0 if symbol == "SPX" else 100.0
-        
-        prices = []
-        current_price = base_price
-        
-        for i, date in enumerate(dates):
-            # Random walk with slight upward bias
-            price_change = np.random.normal(0.05, 2.0)  # Small upward bias, 2 point volatility
-            current_price = max(current_price + price_change, base_price * 0.8)  # Floor at 80% of base
-            
-            # Generate OHLC
-            high = current_price + abs(np.random.normal(0, 1.0))
-            low = current_price - abs(np.random.normal(0, 1.0)) 
-            volume = int(np.random.lognormal(13, 0.5))  # Realistic volume
-            
-            prices.append({
-                'Open': current_price,
-                'High': high,
-                'Low': low, 
-                'Close': current_price,
-                'Volume': volume
-            })
-        
-        data = pd.DataFrame(prices, index=dates)
-        print(f"✅ Generated {len(data)} synthetic data points for {symbol}")
-        return data
+        # If all methods fail, raise an error - don't mask issues with synthetic data
+        error_msg = f"❌ All data sources failed for {symbol} ({frequency}) from {start_date} to {end_date}"
+        print(error_msg)
+        raise ValueError(error_msg)

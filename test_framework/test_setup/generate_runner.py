@@ -28,16 +28,16 @@ Usage:
 Options:
     --category <category>    Run tests for specific category
     --markers <markers>      Run tests with specific markers (unit, integration, ui, etc.)
-    --verbose               Enable verbose output
+    --quiet                 Enable quiet output (verbose is default)
     --coverage              Generate coverage report
     --report-only           Generate report from last test run
     --help                  Show this help message
 
 Examples:
-    python run_tests.py                           # Run all tests
+    python run_tests.py                           # Run all tests (verbose by default)
     python run_tests.py --category data           # Run data management tests only
     python run_tests.py --markers "unit and not slow"  # Run unit tests, exclude slow tests
-    python run_tests.py --verbose --coverage      # Run with verbose output and coverage
+    python run_tests.py --quiet --coverage        # Run with quiet output and coverage
 """
 
 import sys
@@ -134,8 +134,12 @@ Results File: {{self.result_file}}
         """Build pytest command with specified options."""
         cmd = [sys.executable, '-m', 'pytest']
         
-        # Base options
-        cmd.extend(['-v', '--tb=short', '--strict-markers'])
+        # Base options - verbose by default unless quiet is specified
+        if args.quiet:
+            cmd.extend(['-q', '--tb=short', '--strict-markers'])
+        else:
+            # Verbose by default
+            cmd.extend(['-v', '-s', '--tb=long', '--strict-markers'])
         
         # Test path
         if args.category:
@@ -147,10 +151,6 @@ Results File: {{self.result_file}}
         # Markers
         if args.markers:
             cmd.extend(['-m', args.markers])
-        
-        # Verbose output
-        if args.verbose:
-            cmd.extend(['-s', '--tb=long'])
         
         # Coverage
         if args.coverage:
@@ -173,13 +173,23 @@ Results File: {{self.result_file}}
         for line in lines:
             line = line.strip()
             
-            # Test execution tracking
-            if '::test_' in line and ('PASSED' in line or 'FAILED' in line or 'SKIPPED' in line):
-                parts = line.split('::')
+            # Test execution tracking - updated for actual pytest output format
+            if ('tests/' in line and '::' in line and 
+                ('PASSED' in line or 'FAILED' in line or 'SKIPPED' in line)):
+                
+                # Parse pytest output format: tests/test_file.py::TestClass::test_method PASSED
+                parts = line.split(' ')
                 if len(parts) >= 2:
-                    test_file = parts[0].replace('tests/', '').replace('.py', '')
-                    test_name = parts[1].split()[0]
-                    status = 'PASSED' if 'PASSED' in line else 'FAILED' if 'FAILED' in line else 'SKIPPED'
+                    test_path = parts[0]  # e.g., tests/test_data_management.py::TestClass::test_method
+                    status = parts[1]     # e.g., PASSED
+                    
+                    # Extract components
+                    if '::' in test_path:
+                        path_parts = test_path.split('::')
+                        test_file = path_parts[0].replace('tests/', '').replace('.py', '')
+                        test_name = path_parts[-1]  # Get the actual test method name
+                    else:
+                        continue
                     
                     timestamp = datetime.now().strftime("%H:%M:%S")
                     
@@ -258,8 +268,9 @@ Results File: {{self.result_file}}
             for line in iter(process.stdout.readline, ''):
                 output_lines.append(line.rstrip())
                 
-                # Parse and display test results immediately
-                if '::test_' in line and ('PASSED' in line or 'FAILED' in line or 'SKIPPED' in line):
+                # Parse and display test results immediately - look for actual pytest format
+                if ('tests/' in line and '::' in line and 
+                    ('PASSED' in line or 'FAILED' in line or 'SKIPPED' in line)):
                     self.parse_pytest_output(line)
                 elif line.strip() and not line.startswith('='):
                     # Display other pytest output (filtered)
@@ -406,10 +417,10 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=\"\"\"
 Examples:
-  python run_tests.py                           # Run all tests
+  python run_tests.py                           # Run all tests (verbose by default)
   python run_tests.py --category data           # Run data management tests only
   python run_tests.py --markers "unit and not slow"  # Run unit tests, exclude slow tests
-  python run_tests.py --verbose --coverage      # Run with verbose output and coverage
+  python run_tests.py --quiet --coverage        # Run with quiet output and coverage
   python run_tests.py --report-only             # Generate report from last run
         \"\"\"
     )
@@ -427,9 +438,9 @@ Examples:
     )
     
     parser.add_argument(
-        '--verbose',
+        '--quiet',
         action='store_true',
-        help='Enable verbose output'
+        help='Enable quiet output (verbose is default)'
     )
     
     parser.add_argument(

@@ -5,6 +5,22 @@
 
 set -e
 
+# Parse command line arguments
+STREAMLIT_ARG=""
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --streamlit=*)
+            STREAMLIT_ARG="$1"
+            shift
+            ;;
+        *)
+            echo "Unknown option $1"
+            echo "Usage: $0 [--streamlit=APP_FILE]"
+            exit 1
+            ;;
+    esac
+done
+
 # Colors
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
@@ -87,7 +103,11 @@ sleep 1
 # Start Streamlit App
 echo ""
 echo -e "${BLUE}Starting Streamlit App...${NC}"
-"$BASE_DIR/scripts/start_streamlit.sh"
+if [ -n "$STREAMLIT_ARG" ]; then
+    "$BASE_DIR/scripts/start_streamlit.sh" "$STREAMLIT_ARG"
+else
+    "$BASE_DIR/scripts/start_streamlit.sh"
+fi
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✅ Streamlit App started${NC}"

@@ -403,8 +403,9 @@ The following packages are confirmed available:
 6. **No Implementation Details**: Test behavior, not internal mechanics
 7. **Single Assert Per Test**: One verification point per test
 8. **Use Fake Data**: Sample market data files for consistent testing
-9. **Setup/Teardown**: Pytest fixtures for clean test environments
-10. **Group Related Tests**: Test classes for logical organization
+9. **Do Not Create Fake Data to allow a test to pass**
+10. **Setup/Teardown**: Pytest fixtures for clean test environments
+11. **Group Related Tests**: Test classes for logical organization
 
 ### Test Naming Conventions
 ```python
@@ -527,7 +528,7 @@ def cfd_parameters():
 
 1. **Opening Price Definition**: When you say "Opening Price starts with the first date in the historical date range and the first open price", should this be:
    - The very first open price in the entire backtest period?
-   - Reset to the first open price of each trading day?
+   - Reset to the first open price of each trading day? Yes
    - The current interpretation is it's the first price, then reset to exit price after each trade
 
 2. **Intraday vs Multi-day Backtests**: The 2bps trigger logic seems designed for intraday trading, but how should it behave across multiple days?

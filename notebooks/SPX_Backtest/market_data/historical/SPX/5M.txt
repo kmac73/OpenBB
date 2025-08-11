@@ -1,0 +1,1 @@
+/mnt/c/Users/kevin/git/OpenBB/market_data/historical/SPX/5M.txt

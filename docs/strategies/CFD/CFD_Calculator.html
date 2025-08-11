@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive CFD Trade Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Slate and Amber -->
+    <!-- Application Structure Plan: The application is designed as a dual-calculator dashboard, with "Long Trade" and "Short Trade" calculators presented side-by-side in a two-column layout. This structure was chosen for direct comparison, allowing users to see the mirrored logic between buying and selling. The user flow is simple: a user modifies any input field (e.g., Account Balance, Opening Price) in either calculator, and all related outputs for that calculator update instantly. This interactive, real-time feedback loop transforms the static formulas from the source report into a hands-on learning tool, which is the most effective way to understand the cause-and-effect relationships in trade calculations. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: All input fields and calculated values from the source report. Goal: Allow users to perform their own calculations. Presentation: HTML input fields for user-editable values and read-only spans for calculated results. Interaction: Real-time updates on input change. Justification: This provides immediate feedback and a hands-on experience. Library: Vanilla JS.
+        - Report Info: Key price levels (Opening Price, Stop-Loss, Profit Target). Goal: Visually represent the risk and reward zones of a trade. Presentation: A horizontal bar chart for each calculator. Interaction: The chart dynamically updates as the user changes price or risk inputs. Justification: A visual chart makes the abstract concepts of stop-loss and profit targets much easier to grasp than numbers alone. Library: Chart.js (Canvas).
+        - Report Info: The detailed description for each line item. Goal: Provide on-demand context without cluttering the UI. Presentation: A small info icon next to each label, which reveals a pop-up with the description and formula on click. Interaction: Click to toggle visibility. Justification: This maintains a clean interface while keeping the rich explanatory text from the source report easily accessible. Library: Vanilla JS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .info-popup {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 8px;
+            z-index: 10;
+        }
+        .info-icon:hover + .info-popup, .info-popup:hover {
+            display: block;
+        }
+        .calculator-card {
+            background-color: #f8fafc;
+        }
+        .long-trade {
+            border-left: 4px solid #16a34a; /* Green for Long/Up */
+        }
+        .short-trade {
+            border-left: 4px solid #dc2626; /* Red for Short/Down */
+        }
+        .output-value {
+            transition: background-color 0.3s ease;
+        }
+        .highlight {
+            background-color: #fef9c3; /* A light yellow to highlight changes */
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-bold text-slate-900">Interactive CFD Trade Calculator</h1>
+            <p class="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">Analyze and compare long (buy) and short (sell) trade scenarios in real-time. Adjust any input to see how it impacts your potential risk, reward, and required margin.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- Long Trade Calculator -->
+            <div id="long-trade-calculator" class="calculator-card p-6 rounded-lg shadow-lg long-trade">
+                <h2 class="text-3xl font-bold text-green-600 mb-6">Long Trade (Buy) 📈</h2>
+                <div class="space-y-4">
+                    <div class="chart-container relative h-24 mb-6">
+                        <canvas id="longTradeChart"></canvas>
+                    </div>
+                    <!-- Risk & Position Sizing -->
+                    <h3 class="text-xl font-semibold text-slate-700 border-b pb-2">Risk & Position Sizing</h3>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <label for="long-accountBalance" class="font-medium text-slate-600 flex items-center">Account Balance ($)<span class="info-icon ml-2 cursor-pointer text-slate-400">ℹ️</span><div class="info-popup w-64 p-3 bg-slate-800 text-white text-sm rounded-md shadow-lg">The total amount of money in your trading account.</div></label>
+                        <input type="number" step="any" id="long-accountBalance" value="10000" class="p-2 border rounded-md text-right bg-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <label for="long-accountRisk" class="font-medium text-slate-600 flex items-center">Account Risk (%)<span class="info-icon ml-2 cursor-pointer text-slate-400">ℹ️</span><div class="info-popup w-64 p-3 bg-slate-800 text-white text-sm rounded-md shadow-lg">The maximum percentage of your account balance you are willing to lose on this single trade.</div></label>
+                        <input type="number" step="any" id="long-accountRisk" value="2" class="p-2 border rounded-md text-right bg-white">
+                    </div>
+                     <div class="grid grid-cols-2 gap-4 items-center">
+                        <label for="long-stopLossPrice" class="font-medium text-slate-600 flex items-center">Initial Stop-Loss Price ($)<span class="info-icon ml-2 cursor-pointer text-slate-400">ℹ️</span><div class="info-popup w-64 p-3 bg-slate-800 text-white text-sm rounded-md shadow-lg">The price level below your entry where the trade will be automatically closed to prevent further losses.</div></label>
+                        <input type="number" step="any" id="long-stopLossPrice" value="6300" class="p-2 border rounded-md text-right bg-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600 flex items-center">Risk per Trade ($)<span class="info-icon ml-2 cursor-pointer text-slate-400">ℹ️</span><div class="info-popup w-64 p-3 bg-slate-800 text-white text-sm rounded-md shadow-lg">Formula: (Account Balance) * (Account Risk %)</div></span>
+                        <span id="long-riskPerTrade" class="output-value p-2 rounded-md text-right font-semibold bg-slate-100"></span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600 flex items-center">Risk per Contract ($)<span class="info-icon ml-2 cursor-pointer text-slate-400">ℹ️</span><div class="info-popup w-64 p-3 bg-slate-800 text-white text-sm rounded-md shadow-lg">Formula: (Opening Price) - (Initial Stop-Loss Price)</div></span>
+                        <span id="long-riskPerContract" class="output-value p-2 rounded-md text-right font-semibold bg-slate-100"></span>
+                    </div>
+                     <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600 flex items-center">Position Size (CFDs)<span class="info-icon ml-2 cursor-pointer text-slate-400">ℹ️</span><div class="info-popup w-64 p-3 bg-slate-800 text-white text-sm rounded-md shadow-lg">Formula: (Risk per Trade $) / (Risk per Contract $)</div></span>
+                        <span id="long-positionSize" class="output-value p-2 rounded-md text-right font-semibold bg-slate-100"></span>
+                    </div>
+
+                    <!-- Trade Setup -->
+                    <h3 class="text-xl font-semibold text-slate-700 border-b pb-2 pt-4">Trade Setup</h3>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <label for="long-openingPrice" class="font-medium text-slate-600 flex items-center">Opening Price ($)<span class="info-icon ml-2 cursor-pointer text-slate-400">ℹ️</span><div class="info-popup w-64 p-3 bg-slate-800 text-white text-sm rounded-md shadow-lg">The price at which you enter the long trade (buy the CFDs).</div></label>
+                        <input type="number" step="any" id="long-openingPrice" value="6333.75" class="p-2 border rounded-md text-right bg-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <label for="long-marginRate" class="font-medium text-slate-600 flex items-center">Margin Rate (%)<span class="info-icon ml-2 cursor-pointer text-slate-400">ℹ️</span><div class="info-popup w-64 p-3 bg-slate-800 text-white text-sm rounded-md shadow-lg">The percentage of the total position value that you must put up as collateral (margin).</div></label>
+                        <input type="number" step="any" id="long-marginRate" value="5" class="p-2 border rounded-md text-right bg-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600 flex items-center">Leverage Ratio<span class="info-icon ml-2 cursor-pointer text-slate-400">ℹ️</span><div class="info-popup w-64 p-3 bg-slate-800 text-white text-sm rounded-md shadow-lg">Formula: 1 / (Margin Rate %)</div></span>
+                        <span id="long-leverageRatio" class="output-value p-2 rounded-md text-right font-semibold bg-slate-100"></span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600 flex items-center">Notional Value ($)<span class="info-icon ml-2 cursor-pointer text-slate-400">ℹ️</span><div class="info-popup w-64 p-3 bg-slate-800 text-white text-sm rounded-md shadow-lg">Formula: (Position Size) * (Opening Price)</div></span>
+                        <span id="long-notionalValue" class="output-value p-2 rounded-md text-right font-semibold bg-slate-100"></span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600 flex items-center">Margin Required ($)<span class="info-icon ml-2 cursor-pointer text-slate-400">ℹ️</span><div class="info-popup w-64 p-3 bg-slate-800 text-white text-sm rounded-md shadow-lg">Formula: (Notional Value) * (Margin Rate %)</div></span>
+                        <span id="long-marginRequired" class="output-value p-2 rounded-md text-right font-semibold bg-slate-100"></span>
+                    </div>
+                    
+                    <!-- Scenario Analysis -->
+                    <h3 class="text-xl font-semibold text-slate-700 border-b pb-2 pt-4">Scenario Analysis</h3>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <label for="long-currentMarketPrice" class="font-medium text-slate-600 flex items-center">Current Market Price ($)<span class="info-icon ml-2 cursor-pointer text-slate-400">ℹ️</span><div class="info-popup w-64 p-3 bg-slate-800 text-white text-sm rounded-md shadow-lg">The live, real-time price of the asset.</div></label>
+                        <input type="number" step="any" id="long-currentMarketPrice" value="6364.00" class="p-2 border rounded-md text-right bg-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <label for="long-highestPriceReached" class="font-medium text-slate-600 flex items-center">Highest Price Reached ($)<span class="info-icon ml-2 cursor-pointer text-slate-400">ℹ️</span><div class="info-popup w-64 p-3 bg-slate-800 text-white text-sm rounded-md shadow-lg">The highest price the asset has reached since you opened the position.</div></label>
+                        <input type="number" step="any" id="long-highestPriceReached" value="6364.00" class="p-2 border rounded-md text-right bg-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <label for="long-riskRewardRatio" class="font-medium text-slate-600 flex items-center">Risk/Reward Ratio<span class="info-icon ml-2 cursor-pointer text-slate-400">ℹ️</span><div class="info-popup w-64 p-3 bg-slate-800 text-white text-sm rounded-md shadow-lg">Defines your desired profit relative to your risk.</div></label>
+                        <input type="number" step="any" id="long-riskRewardRatio" value="2" class="p-2 border rounded-md text-right bg-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600 flex items-center">Profit Target Price ($)<span class="info-icon ml-2 cursor-pointer text-slate-400">ℹ️</span><div class="info-popup w-64 p-3 bg-slate-800 text-white text-sm rounded-md shadow-lg">Formula: (Opening Price) + ((Risk per Contract $) * (Risk/Reward Ratio))</div></span>
+                        <span id="long-profitTargetPrice" class="output-value p-2 rounded-md text-right font-semibold bg-slate-100"></span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <label for="long-trailingStopPercent" class="font-medium text-slate-600 flex items-center">Trailing Stop (%)<span class="info-icon ml-2 cursor-pointer text-slate-400">ℹ️</span><div class="info-popup w-64 p-3 bg-slate-800 text-white text-sm rounded-md shadow-lg">The percentage below the highest price at which to set a dynamic stop-loss.</div></label>
+                        <input type="number" step="any" id="long-trailingStopPercent" value="1" class="p-2 border rounded-md text-right bg-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600 flex items-center">Active Trailing Stop ($)<span class="info-icon ml-2 cursor-pointer text-slate-400">ℹ️</span><div class="info-popup w-64 p-3 bg-slate-800 text-white text-sm rounded-md shadow-lg">A dynamic stop-loss that moves up as the price rises.</div></span>
+                        <span id="long-activeTrailingStop" class="output-value p-2 rounded-md text-right font-semibold bg-slate-100"></span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600 flex items-center">Final Exit Price ($)<span class="info-icon ml-2 cursor-pointer text-slate-400">ℹ️</span><div class="info-popup w-64 p-3 bg-slate-800 text-white text-sm rounded-md shadow-lg">The calculated price where the trade would close based on current conditions.</div></span>
+                        <span id="long-finalExitPrice" class="output-value p-2 rounded-md text-right font-semibold bg-slate-100"></span>
+                    </div>
+
+                    <!-- Final Results -->
+                    <h3 class="text-xl font-semibold text-slate-700 border-b pb-2 pt-4">Final Results</h3>
+                     <div class="grid grid-cols-2 gap-4 items-center">
+                        <label for="long-transactionCost" class="font-medium text-slate-600 flex items-center">Round Trip Cost per CFD ($)<span class="info-icon ml-2 cursor-pointer text-slate-400">ℹ️</span><div class="info-popup w-64 p-3 bg-slate-800 text-white text-sm rounded-md shadow-lg">The broker's round-trip fee per contract for opening and closing the trade.</div></label>
+                        <input type="number" step="any" id="long-transactionCost" value="0.80" class="p-2 border rounded-md text-right bg-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600 flex items-center">Gross Profit/Loss ($)<span class="info-icon ml-2 cursor-pointer text-slate-400">ℹ️</span><div class="info-popup w-64 p-3 bg-slate-800 text-white text-sm rounded-md shadow-lg">Formula: ((Final Exit Price) - (Opening Price)) * (Position Size)</div></span>
+                        <span id="long-grossProfit" class="output-value p-2 rounded-md text-right font-bold"></span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600 flex items-center">Net Profit ($)<span class="info-icon ml-2 cursor-pointer text-slate-400">ℹ️</span><div class="info-popup w-64 p-3 bg-slate-800 text-white text-sm rounded-md shadow-lg">Formula: (Gross P/L) - (Cost * Position Size)</div></span>
+                        <span id="long-netProfit" class="output-value p-2 rounded-md text-right font-bold"></span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600 flex items-center">Return on Margin (%)<span class="info-icon ml-2 cursor-pointer text-slate-400">ℹ️</span><div class="info-popup w-64 p-3 bg-slate-800 text-white text-sm rounded-md shadow-lg">Formula: (Net Profit) / (Margin Required)</div></span>
+                        <span id="long-returnOnMargin" class="output-value p-2 rounded-md text-right font-bold"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Short Trade Calculator -->
+            <div id="short-trade-calculator" class="calculator-card p-6 rounded-lg shadow-lg short-trade">
+                <h2 class="text-3xl font-bold text-red-600 mb-6">Short Trade (Sell) 📉</h2>
+                <div class="space-y-4">
+                    <div class="chart-container relative h-24 mb-6">
+                        <canvas id="shortTradeChart"></canvas>
+                    </div>
+                    <!-- Risk & Position Sizing -->
+                    <h3 class="text-xl font-semibold text-slate-700 border-b pb-2">Risk & Position Sizing</h3>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <label for="short-accountBalance" class="font-medium text-slate-600">Account Balance ($)</label>
+                        <input type="number" step="any" id="short-accountBalance" value="10000" class="p-2 border rounded-md text-right bg-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <label for="short-accountRisk" class="font-medium text-slate-600">Account Risk (%)</label>
+                        <input type="number" step="any" id="short-accountRisk" value="2" class="p-2 border rounded-md text-right bg-white">
+                    </div>
+                     <div class="grid grid-cols-2 gap-4 items-center">
+                        <label for="short-stopLossPrice" class="font-medium text-slate-600">Initial Stop-Loss Price ($)</label>
+                        <input type="number" step="any" id="short-stopLossPrice" value="6333.75" class="p-2 border rounded-md text-right bg-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600">Risk per Trade ($)</span>
+                        <span id="short-riskPerTrade" class="output-value p-2 rounded-md text-right font-semibold bg-slate-100"></span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600">Risk per Contract ($)</span>
+                        <span id="short-riskPerContract" class="output-value p-2 rounded-md text-right font-semibold bg-slate-100"></span>
+                    </div>
+                     <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600">Position Size (CFDs)</span>
+                        <span id="short-positionSize" class="output-value p-2 rounded-md text-right font-semibold bg-slate-100"></span>
+                    </div>
+
+                    <!-- Trade Setup -->
+                    <h3 class="text-xl font-semibold text-slate-700 border-b pb-2 pt-4">Trade Setup</h3>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <label for="short-openingPrice" class="font-medium text-slate-600">Opening Price ($)</label>
+                        <input type="number" step="any" id="short-openingPrice" value="6300" class="p-2 border rounded-md text-right bg-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <label for="short-marginRate" class="font-medium text-slate-600">Margin Rate (%)</label>
+                        <input type="number" step="any" id="short-marginRate" value="5" class="p-2 border rounded-md text-right bg-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600">Leverage Ratio</span>
+                        <span id="short-leverageRatio" class="output-value p-2 rounded-md text-right font-semibold bg-slate-100"></span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600">Notional Value ($)</span>
+                        <span id="short-notionalValue" class="output-value p-2 rounded-md text-right font-semibold bg-slate-100"></span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600">Margin Required ($)</span>
+                        <span id="short-marginRequired" class="output-value p-2 rounded-md text-right font-semibold bg-slate-100"></span>
+                    </div>
+                    
+                    <!-- Scenario Analysis -->
+                    <h3 class="text-xl font-semibold text-slate-700 border-b pb-2 pt-4">Scenario Analysis</h3>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <label for="short-currentMarketPrice" class="font-medium text-slate-600">Current Market Price ($)</label>
+                        <input type="number" step="any" id="short-currentMarketPrice" value="6250.00" class="p-2 border rounded-md text-right bg-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <label for="short-lowestPriceReached" class="font-medium text-slate-600">Lowest Price Reached ($)</label>
+                        <input type="number" step="any" id="short-lowestPriceReached" value="6250.00" class="p-2 border rounded-md text-right bg-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <label for="short-riskRewardRatio" class="font-medium text-slate-600">Risk/Reward Ratio</label>
+                        <input type="number" step="any" id="short-riskRewardRatio" value="2" class="p-2 border rounded-md text-right bg-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600">Profit Target Price ($)</span>
+                        <span id="short-profitTargetPrice" class="output-value p-2 rounded-md text-right font-semibold bg-slate-100"></span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <label for="short-trailingStopPercent" class="font-medium text-slate-600">Trailing Stop (%)</label>
+                        <input type="number" step="any" id="short-trailingStopPercent" value="1" class="p-2 border rounded-md text-right bg-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600">Active Trailing Stop ($)</span>
+                        <span id="short-activeTrailingStop" class="output-value p-2 rounded-md text-right font-semibold bg-slate-100"></span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600">Final Exit Price ($)</span>
+                        <span id="short-finalExitPrice" class="output-value p-2 rounded-md text-right font-semibold bg-slate-100"></span>
+                    </div>
+
+                    <!-- Final Results -->
+                    <h3 class="text-xl font-semibold text-slate-700 border-b pb-2 pt-4">Final Results</h3>
+                     <div class="grid grid-cols-2 gap-4 items-center">
+                        <label for="short-transactionCost" class="font-medium text-slate-600">Round Trip Cost per CFD ($)</label>
+                        <input type="number" step="any" id="short-transactionCost" value="0.80" class="p-2 border rounded-md text-right bg-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600">Gross Profit/Loss ($)</span>
+                        <span id="short-grossProfit" class="output-value p-2 rounded-md text-right font-bold"></span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600">Net Profit ($)</span>
+                        <span id="short-netProfit" class="output-value p-2 rounded-md text-right font-bold"></span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 items-center">
+                        <span class="font-medium text-slate-600">Return on Margin (%)</span>
+                        <span id="short-returnOnMargin" class="output-value p-2 rounded-md text-right font-bold"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const longTradeChartCtx = document.getElementById('longTradeChart').getContext('2d');
+        const shortTradeChartCtx = document.getElementById('shortTradeChart').getContext('2d');
+        let longChart, shortChart;
+
+        function createOrUpdateChart(chartInstance, context, labels, data, backgroundColors) {
+            if (chartInstance) {
+                chartInstance.data.labels = labels;
+                chartInstance.data.datasets[0].data = data;
+                chartInstance.data.datasets[0].backgroundColor = backgroundColors;
+                chartInstance.update();
+                return chartInstance;
+            } else {
+                return new Chart(context, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Price Levels',
+                            data: data,
+                            backgroundColor: backgroundColors,
+                            borderColor: 'rgba(255, 255, 255, 0.8)',
+                            borderWidth: 1,
+                            barPercentage: 1.0,
+                            categoryPercentage: 1.0,
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.label}: $${context.raw.toFixed(2)}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: false,
+                                grid: {
+                                    display: false,
+                                    drawBorder: false,
+                                },
+                                ticks: {
+                                    display: false
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    display: false,
+                                    drawBorder: false,
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function highlightElement(element) {
+            element.classList.add('highlight');
+            setTimeout(() => {
+                element.classList.remove('highlight');
+            }, 500);
+        }
+
+        function getValuesByIds(ids) {
+            const values = {};
+            for (const id of ids) {
+                values[id] = parseFloat(document.getElementById(id).value) || 0;
+            }
+            return values;
+        }
+
+        function updateOutputs(outputs) {
+             for (const [id, value] of Object.entries(outputs)) {
+                const el = document.getElementById(id);
+                if (el) {
+                    if (el.textContent !== value) {
+                        el.textContent = value;
+                        highlightElement(el);
+                    }
+                }
+            }
+        }
+
+        function calculateLongTrade() {
+            const ids = ['long-accountBalance', 'long-accountRisk', 'long-stopLossPrice', 'long-openingPrice', 'long-marginRate', 'long-currentMarketPrice', 'long-highestPriceReached', 'long-riskRewardRatio', 'long-trailingStopPercent', 'long-transactionCost'];
+            const v = getValuesByIds(ids);
+
+            const riskPerTrade = v['long-accountBalance'] * (v['long-accountRisk'] / 100);
+            const riskPerContract = v['long-openingPrice'] > v['long-stopLossPrice'] ? v['long-openingPrice'] - v['long-stopLossPrice'] : 0;
+            const positionSize = riskPerContract > 0 ? riskPerTrade / riskPerContract : 0;
+            const leverageRatio = v['long-marginRate'] > 0 ? 1 / (v['long-marginRate'] / 100) : 0;
+            const notionalValue = positionSize * v['long-openingPrice'];
+            const marginRequired = notionalValue * (v['long-marginRate'] / 100);
+            
+            const profitTargetPrice = v['long-openingPrice'] + (riskPerContract * v['long-riskRewardRatio']);
+            const activeTrailingStop = v['long-highestPriceReached'] > v['long-openingPrice'] ? v['long-highestPriceReached'] * (1 - (v['long-trailingStopPercent'] / 100)) : 0;
+
+            let finalExitPrice;
+            if (v['long-currentMarketPrice'] >= profitTargetPrice) {
+                finalExitPrice = profitTargetPrice;
+            } else if (activeTrailingStop > 0 && v['long-currentMarketPrice'] <= activeTrailingStop) {
+                finalExitPrice = activeTrailingStop;
+            } else {
+                finalExitPrice = v['long-currentMarketPrice'];
+            }
+            
+            const grossProfit = (finalExitPrice - v['long-openingPrice']) * positionSize;
+            const netProfit = grossProfit - (v['long-transactionCost'] * positionSize);
+            const returnOnMargin = marginRequired > 0 ? (netProfit / marginRequired) * 100 : 0;
+
+            updateOutputs({
+                'long-riskPerTrade': riskPerTrade.toFixed(2),
+                'long-riskPerContract': riskPerContract.toFixed(2),
+                'long-positionSize': positionSize.toFixed(4),
+                'long-leverageRatio': `${leverageRatio.toFixed(0)}:1`,
+                'long-notionalValue': notionalValue.toFixed(2),
+                'long-marginRequired': marginRequired.toFixed(2),
+                'long-profitTargetPrice': profitTargetPrice.toFixed(2),
+                'long-activeTrailingStop': activeTrailingStop > 0 ? activeTrailingStop.toFixed(2) : 'N/A',
+                'long-finalExitPrice': finalExitPrice.toFixed(2),
+                'long-grossProfit': grossProfit.toFixed(2),
+                'long-netProfit': netProfit.toFixed(2),
+                'long-returnOnMargin': `${returnOnMargin.toFixed(2)}%`
+            });
+            
+            document.getElementById('long-netProfit').style.color = netProfit >= 0 ? '#16a34a' : '#dc2626';
+            document.getElementById('long-returnOnMargin').style.color = returnOnMargin >= 0 ? '#16a34a' : '#dc2626';
+
+            longChart = createOrUpdateChart(longChart, longTradeChartCtx, ['Stop-Loss', 'Open', 'Target'], [v['long-stopLossPrice'], v['long-openingPrice'], profitTargetPrice], ['rgba(239, 68, 68, 0.6)', 'rgba(59, 130, 246, 0.6)', 'rgba(34, 197, 94, 0.6)']);
+        }
+
+        function calculateShortTrade() {
+            const ids = ['short-accountBalance', 'short-accountRisk', 'short-stopLossPrice', 'short-openingPrice', 'short-marginRate', 'short-currentMarketPrice', 'short-lowestPriceReached', 'short-riskRewardRatio', 'short-trailingStopPercent', 'short-transactionCost'];
+            const v = getValuesByIds(ids);
+
+            const riskPerTrade = v['short-accountBalance'] * (v['short-accountRisk'] / 100);
+            const riskPerContract = v['short-stopLossPrice'] > v['short-openingPrice'] ? v['short-stopLossPrice'] - v['short-openingPrice'] : 0;
+            const positionSize = riskPerContract > 0 ? riskPerTrade / riskPerContract : 0;
+            const leverageRatio = v['short-marginRate'] > 0 ? 1 / (v['short-marginRate'] / 100) : 0;
+            const notionalValue = positionSize * v['short-openingPrice'];
+            const marginRequired = notionalValue * (v['short-marginRate'] / 100);
+
+            const profitTargetPrice = v['short-openingPrice'] - (riskPerContract * v['short-riskRewardRatio']);
+            const activeTrailingStop = v['short-lowestPriceReached'] < v['short-openingPrice'] && v['short-lowestPriceReached'] > 0 ? v['short-lowestPriceReached'] * (1 + (v['short-trailingStopPercent'] / 100)) : 0;
+
+            let finalExitPrice;
+            if (v['short-currentMarketPrice'] <= profitTargetPrice && profitTargetPrice > 0) {
+                finalExitPrice = profitTargetPrice;
+            } else if (activeTrailingStop > 0 && v['short-currentMarketPrice'] >= activeTrailingStop) {
+                finalExitPrice = activeTrailingStop;
+            } else {
+                finalExitPrice = v['short-currentMarketPrice'];
+            }
+
+            const grossProfit = (v['short-openingPrice'] - finalExitPrice) * positionSize;
+            const netProfit = grossProfit - (v['short-transactionCost'] * positionSize);
+            const returnOnMargin = marginRequired > 0 ? (netProfit / marginRequired) * 100 : 0;
+
+            updateOutputs({
+                'short-riskPerTrade': riskPerTrade.toFixed(2),
+                'short-riskPerContract': riskPerContract.toFixed(2),
+                'short-positionSize': positionSize.toFixed(4),
+                'short-leverageRatio': `${leverageRatio.toFixed(0)}:1`,
+                'short-notionalValue': notionalValue.toFixed(2),
+                'short-marginRequired': marginRequired.toFixed(2),
+                'short-profitTargetPrice': profitTargetPrice.toFixed(2),
+                'short-activeTrailingStop': activeTrailingStop > 0 ? activeTrailingStop.toFixed(2) : 'N/A',
+                'short-finalExitPrice': finalExitPrice.toFixed(2),
+                'short-grossProfit': grossProfit.toFixed(2),
+                'short-netProfit': netProfit.toFixed(2),
+                'short-returnOnMargin': `${returnOnMargin.toFixed(2)}%`
+            });
+
+            document.getElementById('short-netProfit').style.color = netProfit >= 0 ? '#16a34a' : '#dc2626';
+            document.getElementById('short-returnOnMargin').style.color = returnOnMargin >= 0 ? '#16a34a' : '#dc2626';
+
+            shortChart = createOrUpdateChart(shortChart, shortTradeChartCtx, ['Target', 'Open', 'Stop-Loss'], [profitTargetPrice, v['short-openingPrice'], v['short-stopLossPrice']], ['rgba(34, 197, 94, 0.6)', 'rgba(59, 130, 246, 0.6)', 'rgba(239, 68, 68, 0.6)']);
+        }
+
+        document.getElementById('long-trade-calculator').addEventListener('input', calculateLongTrade);
+        document.getElementById('short-trade-calculator').addEventListener('input', calculateShortTrade);
+
+        window.onload = () => {
+            calculateLongTrade();
+            calculateShortTrade();
+        };
+    </script>
+
+</body>
+</html>

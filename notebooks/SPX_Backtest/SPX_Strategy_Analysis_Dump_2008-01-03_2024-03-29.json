@@ -1,0 +1,36 @@
+{
+  "strategy_parameters": {
+    "entry_trigger_bps": 1.0,
+    "profit_target_bps": 6.0,
+    "stop_loss_bps": 15.0,
+    "leverage": 20.0,
+    "account_balance": 10000.0,
+    "margin_rate": 5.0,
+    "position_sizing": "DYNAMIC (calculated per trade based on current market price)",
+    "account_risk_pct": 2.0,
+    "date_range": "2008-01-03 to 2024-03-29"
+  },
+  "execution_results": {
+    "total_trades": 1492,
+    "win_rate": 71.51474530831099,
+    "net_pnl": -8999.933374454944,
+    "sharpe_ratio": -0.08648325350010107,
+    "profit_factor": 0.7904304844198485,
+    "max_drawdown": -9611.288680755246,
+    "var_95": -153.05244116369644
+  },
+  "account_tracking": {
+    "starting_balance": 10000.0,
+    "final_balance": 1000.0666255450524,
+    "lowest_balance": 1000.0666255450524,
+    "highest_balance": 10611.355306300298,
+    "trades_below_start": 1457,
+    "worst_streak_below": 1452
+  },
+  "risk_analysis": {
+    "max_drawdown_pct": 96.11288680755246,
+    "account_return_pct": -89.99933374454943,
+    "annualized_return_pct": -5.549261586402363,
+    "multi_day_trades": 0
+  }
+}

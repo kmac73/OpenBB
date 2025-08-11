@@ -1,0 +1,93 @@
+name: OpenBB-env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.12
+  
+  # Core data science
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  
+  # Visualization
+  - matplotlib
+  - seaborn
+  - plotly
+  - bokeh
+  
+  # Machine learning
+  - xgboost
+  - lightgbm
+  - statsmodels
+  - tensorflow
+  - keras
+  
+  # Jupyter and kernels
+  - ipykernel
+  - jupyterlab
+  - notebook
+  
+  # Utilities
+  - requests
+  - beautifulsoup4
+  - openpyxl
+  - xlrd
+  - pyyaml
+  - tqdm
+  
+  # Development tools
+  - black
+  - flake8
+  - pytest
+  - isort
+  - mypy
+  
+  # Testing framework packages
+  - pytest-cov
+  - pytest-html
+  - pytest-mock
+  - pytest-xdist
+  - pytest-benchmark
+  - coverage
+  - psutil
+  
+  # Data/Time utilities
+  - python-dateutil
+  - pytz
+  - colorama
+  - tabulate
+  
+  # Database
+  - sqlalchemy
+  
+  # Configuration
+  - pydantic
+  - python-dotenv
+  
+  # Logging
+  - rich
+  
+  # Network testing
+  - httpx
+  
+  # pip packages (not available in conda)
+  - pip
+  - pip:
+    - pandas-profiling
+    - streamlit
+    - memory-profiler
+    - reportlab
+    - unittest-xml-reporting
+    - freezegun
+    - responses
+    - selenium
+    - pytest-selenium
+    - kaleido
+    - PyPDF2
+    - coverage-badge
+    - openbb
+    - yfinance
+    - structlog
+    - aioresponses

@@ -1,0 +1,45 @@
+F.FFFFFFFFFFFFFFFFFFF
+=================================== FAILURES ===================================
+/mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/test_backtest_analyzer.py:30: AssertionError: assert <Mock name='mock.risk_free_rate' id='140410370187312'> == 0.03
+/mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/test_backtest_analyzer.py:62: TypeError: 'Mock' object is not subscriptable
+/mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/test_backtest_analyzer.py:78: TypeError: 'Mock' object is not subscriptable
+/mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/test_backtest_analyzer.py:96: TypeError: 'Mock' object is not subscriptable
+/mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/test_backtest_analyzer.py:113: TypeError: 'Mock' object is not subscriptable
+/mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/test_backtest_analyzer.py:130: TypeError: 'Mock' object is not subscriptable
+/mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/test_backtest_analyzer.py:149: TypeError: 'Mock' object is not subscriptable
+/mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/test_backtest_analyzer.py:166: TypeError: 'Mock' object is not subscriptable
+/mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/test_backtest_analyzer.py:181: TypeError: 'Mock' object is not subscriptable
+/mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/test_backtest_analyzer.py:204: TypeError: argument of type 'Mock' is not iterable
+/mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/test_backtest_analyzer.py:220: TypeError: unsupported operand type(s) for -: 'Mock' and 'float'
+/mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/test_backtest_analyzer.py:231: TypeError: '>' not supported between instances of 'Mock' and 'int'
+/mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/test_backtest_analyzer.py:250: TypeError: 'Mock' object is not subscriptable
+/mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/test_backtest_analyzer.py:261: TypeError: 'Mock' object is not subscriptable
+/mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/test_backtest_analyzer.py:279: TypeError: unsupported operand type(s) for -: 'Mock' and 'float'
+/mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/test_backtest_analyzer.py:290: TypeError: 'Mock' object is not subscriptable
+/mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/test_backtest_analyzer.py:301: TypeError: 'Mock' object is not subscriptable
+/mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/test_backtest_analyzer.py:323: AssertionError: assert False
+/mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/test_backtest_analyzer.py:337: AssertionError: assert <Mock name='mock.calculate_var_parametric_95_1day()' id='140410342312800'> == 0
+/mnt/c/Users/kevin/git/OpenBB/test_framework/SPX_CFD/test_backtest_analyzer.py:359: TypeError: unsupported operand type(s) for -: 'Mock' and 'float'
+=========================== short test summary info ============================
+FAILED test_framework/SPX_CFD/test_backtest_analyzer.py::TestBacktestAnalyzerInitialization::test_analyzer_initialization_with_risk_free_rate
+FAILED test_framework/SPX_CFD/test_backtest_analyzer.py::TestBasicTradeMetrics::test_total_trades_count_with_real_data
+FAILED test_framework/SPX_CFD/test_backtest_analyzer.py::TestBasicTradeMetrics::test_long_short_trade_breakdown
+FAILED test_framework/SPX_CFD/test_backtest_analyzer.py::TestBasicTradeMetrics::test_winning_losing_trades_classification
+FAILED test_framework/SPX_CFD/test_backtest_analyzer.py::TestBasicTradeMetrics::test_win_rate_calculation
+FAILED test_framework/SPX_CFD/test_backtest_analyzer.py::TestPnLCalculations::test_pnl_calculations_gross_and_net
+FAILED test_framework/SPX_CFD/test_backtest_analyzer.py::TestPnLCalculations::test_win_loss_averages
+FAILED test_framework/SPX_CFD/test_backtest_analyzer.py::TestPnLCalculations::test_profit_factor_calculation
+FAILED test_framework/SPX_CFD/test_backtest_analyzer.py::TestPnLCalculations::test_cost_ratio_calculation
+FAILED test_framework/SPX_CFD/test_backtest_analyzer.py::TestDrawdownCalculations::test_drawdown_both_methods
+FAILED test_framework/SPX_CFD/test_backtest_analyzer.py::TestDrawdownCalculations::test_max_drawdown_percentage_calculation
+FAILED test_framework/SPX_CFD/test_backtest_analyzer.py::TestDrawdownCalculations::test_avg_drawdown_calculation
+FAILED test_framework/SPX_CFD/test_backtest_analyzer.py::TestTimeBasedMetrics::test_trade_duration_metrics
+FAILED test_framework/SPX_CFD/test_backtest_analyzer.py::TestTimeBasedMetrics::test_empty_trades_duration_handling
+FAILED test_framework/SPX_CFD/test_backtest_analyzer.py::TestReturnMetrics::test_total_return_calculation
+FAILED test_framework/SPX_CFD/test_backtest_analyzer.py::TestReturnMetrics::test_final_equity_tracking
+FAILED test_framework/SPX_CFD/test_backtest_analyzer.py::TestReturnMetrics::test_empty_equity_curve_handling
+FAILED test_framework/SPX_CFD/test_backtest_analyzer.py::TestVaRCalculation::test_var_parametric_95_1day
+FAILED test_framework/SPX_CFD/test_backtest_analyzer.py::TestVaRCalculation::test_var_insufficient_data
+FAILED test_framework/SPX_CFD/test_backtest_analyzer.py::TestVaRCalculation::test_var_normal_distribution_assumption
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 20 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+20 failed, 1 passed in 17.80s

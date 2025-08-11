@@ -1,0 +1,20 @@
+6
+Verify correctness and performance of CFD trading logic, risk management systems, and order execution. Priority on ensuring transaction costs don't erode profitability as specified in the strategy document.
+Trading logic validation (entry/exit signals)
+Risk management (stop loss, leverage controls)  
+Order execution accuracy and speed
+Performance monitoring and analytics
+Generate comprehensive tests for Trading logic/algorithms? (Found in document)
+1
+Generate comprehensive tests for Risk management systems? (Found in document)
+1
+Generate comprehensive tests for Order execution systems? (Found in document)
+1
+Generate comprehensive tests for Performance monitoring? (Found in document)
+2
+Generate comprehensive tests for Configuration/parameter management? (Found in document)
+2
+Generate comprehensive tests for User interface? (Found in document)
+3
+Generate comprehensive tests for External API integrations? (Found in document)
+2
